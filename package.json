@@ -9,9 +9,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "hls.js": "^1.5.8"
+    "hls.js": "^1.5.8",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7"
   },
   "devDependencies": {
+    "@vitejs/plugin-react": "^5.2.0",
     "vite": "^6.0.0"
   }
 }
