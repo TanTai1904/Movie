@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import MovieCard from './MovieCard.jsx';
 import SkeletonCard from './SkeletonCard.jsx';
-import { fetchAPI, getAPIBase } from '../utils.js';
+import { fetchUnifiedSearch, fetchUnifiedCategory, fetchMetadataList } from '../utils.js';
 
-export default function FilterView({ initialType = 'phim-moi-cap-nhat', searchQuery = '', apiSource, onLogRequest, onLogResponse }) {
+export default function FilterView({ initialType = 'phim-moi-cap-nhat', searchQuery = '', onLogRequest, onLogResponse }) {
   const [type, setType] = useState(initialType);
   const [genre, setGenre] = useState('');
   const [country, setCountry] = useState('');
@@ -33,17 +33,17 @@ export default function FilterView({ initialType = 'phim-moi-cap-nhat', searchQu
   useEffect(() => {
     async function loadMetadata() {
       try {
-        const genresData = await fetchAPI('/the-loai', apiSource, false);
+        const genresData = await fetchMetadataList('/the-loai');
         setGenresList(Array.isArray(genresData) ? genresData : (genresData.value || []));
 
-        const countriesData = await fetchAPI('/quoc-gia', apiSource, false);
+        const countriesData = await fetchMetadataList('/quoc-gia');
         setCountriesList(Array.isArray(countriesData) ? countriesData : (countriesData.value || []));
       } catch (err) {
         console.error('Error loading metadata:', err);
       }
     }
     loadMetadata();
-  }, [apiSource]);
+  }, []);
 
   // 3. Trigger initial filtering or search query execution
   useEffect(() => {
@@ -52,19 +52,19 @@ export default function FilterView({ initialType = 'phim-moi-cap-nhat', searchQu
     } else {
       executeFilter(1);
     }
-  }, [searchQuery, apiSource]);
+  }, [searchQuery]);
 
   const executeSearch = async (page = 1) => {
     setLoading(true);
     setCurrentPage(page);
     try {
-      const data = await fetchAPI(
-        `/v1/api/tim-kiem?keyword=${encodeURIComponent(searchQuery)}&page=${page}`,
-        apiSource,
-        false,
-        onLogRequest,
-        onLogResponse
-      );
+      if (onLogRequest) {
+        onLogRequest('GET', 'Unified Multi-Source: Search ("' + searchQuery + '", Page ' + page + ')');
+      }
+      const data = await fetchUnifiedSearch(searchQuery, page);
+      if (onLogResponse) {
+        onLogResponse(data);
+      }
       const items = data.data?.items || [];
       setMovies(items);
       setTotalPages(data.data?.params?.pagination?.totalPages || 1);
@@ -83,50 +83,18 @@ export default function FilterView({ initialType = 'phim-moi-cap-nhat', searchQu
   const executeFilter = async (page = 1) => {
     setLoading(true);
     setCurrentPage(page);
-    
-    let endpoint = '';
-    let isFullURL = false;
-    
-    const apiBase = getAPIBase(apiSource);
-
-    if (genre) {
-      endpoint = `${apiBase}/v1/api/the-loai/${genre}?page=${page}`;
-      isFullURL = true;
-    } else if (country) {
-      endpoint = `${apiBase}/v1/api/quoc-gia/${country}?page=${page}`;
-      isFullURL = true;
-    } else if (type && type !== 'phim-moi-cap-nhat') {
-      endpoint = `${apiBase}/v1/api/danh-sach/${type}?page=${page}&year=${year}`;
-      isFullURL = true;
-    } else {
-      endpoint = `/danh-sach/phim-moi-cap-nhat?page=${page}`;
-      isFullURL = false;
-    }
 
     try {
-      const data = await fetchAPI(
-        endpoint,
-        apiSource,
-        isFullURL,
-        onLogRequest,
-        onLogResponse
-      );
-
-      let items = [];
-      let pages = 1;
-
-      if (isFullURL) {
-        items = data.data?.items || [];
-        pages = data.data?.params?.pagination?.totalPages || 1;
-      } else {
-        items = data.items || [];
-        pages = data.pagination?.totalPages || 1;
+      if (onLogRequest) {
+        onLogRequest('GET', `Unified Multi-Source: Filter (Type: ${type}, Genre: ${genre}, Country: ${country}, Year: ${year}, Page: ${page})`);
+      }
+      const data = await fetchUnifiedCategory(type, page, year, genre, country);
+      if (onLogResponse) {
+        onLogResponse(data);
       }
 
-      // Handle frontend manual filtering of year if year is specified but API endpoint doesn't support it directly
-      if (year && (genre || country)) {
-        items = items.filter(m => m.year === parseInt(year));
-      }
+      const items = data.data?.items || [];
+      const pages = data.data?.params?.pagination?.totalPages || 1;
 
       setMovies(items);
       setTotalPages(pages);
@@ -273,7 +241,7 @@ export default function FilterView({ initialType = 'phim-moi-cap-nhat', searchQu
             </div>
           ) : (
             movies.map(movie => (
-              <MovieCard key={movie.slug} movie={movie} apiSource={apiSource} />
+              <MovieCard key={movie.slug} movie={movie} />
             ))
           )}
         </div>

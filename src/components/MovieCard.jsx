@@ -1,8 +1,8 @@
 import React from 'react';
 import { fixImageURL } from '../utils.js';
 
-export default function MovieCard({ movie, apiSource }) {
-  const coverUrl = fixImageURL(movie.poster_url || movie.thumb_url, apiSource);
+export default function MovieCard({ movie }) {
+  const coverUrl = fixImageURL(movie.poster_url || movie.thumb_url, movie.apiSource);
 
   const handleClick = () => {
     window.location.hash = `#movie/${movie.slug}`;
@@ -17,7 +17,7 @@ export default function MovieCard({ movie, apiSource }) {
           alt={movie.name}
           loading="lazy"
           onError={(e) => {
-            e.target.src = 'https://placehold.co/300x450/1a1e24/66fcf1?text=No+Image';
+            e.target.src = '/default-poster.png';
           }}
         />
         <div className="card-overlay">

@@ -1,7 +1,7 @@
 import React from 'react';
 import { fixImageURL } from '../utils.js';
 
-export default function HistoryView({ history, clearHistory, deleteHistoryItem, apiSource }) {
+export default function HistoryView({ history, clearHistory, deleteHistoryItem }) {
   
   const handleClearAll = () => {
     if (window.confirm('Bạn có chắc chắn muốn xóa toàn bộ lịch sử xem phim?')) {
@@ -59,10 +59,10 @@ export default function HistoryView({ history, clearHistory, deleteHistoryItem, 
             >
               <img
                 className="history-thumb"
-                src={fixImageURL(item.movieThumb, apiSource)}
+                src={fixImageURL(item.movieThumb, item.apiSource)}
                 alt={item.movieName}
                 onError={(e) => {
-                  e.target.src = 'https://placehold.co/300x450/1a1e24/66fcf1?text=No+Image';
+                  e.target.src = '/default-poster.png';
                 }}
               />
               <div className="history-info">

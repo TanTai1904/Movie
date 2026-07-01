@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Sidebar from './components/Sidebar.jsx';
 import Header from './components/Header.jsx';
-import DevPanel from './components/DevPanel.jsx';
 import HomeView from './components/HomeView.jsx';
 import DetailView from './components/DetailView.jsx';
 import WatchView from './components/WatchView.jsx';
@@ -10,13 +9,9 @@ import FavoritesView from './components/FavoritesView.jsx';
 import HistoryView from './components/HistoryView.jsx';
 
 export default function App() {
-  const [apiSource, setApiSource] = useState(
-    () => localStorage.getItem('studyflix_api_source') || 'phimapi'
-  );
-  
   const [watchlist, setWatchlist] = useState(() => {
     try {
-      return JSON.parse(localStorage.getItem('studyflix_watchlist')) || [];
+      return JSON.parse(localStorage.getItem('sofaflix_watchlist')) || [];
     } catch {
       return [];
     }
@@ -24,19 +19,13 @@ export default function App() {
 
   const [history, setHistory] = useState(() => {
     try {
-      return JSON.parse(localStorage.getItem('studyflix_history')) || [];
+      return JSON.parse(localStorage.getItem('sofaflix_history')) || [];
     } catch {
       return [];
     }
   });
 
-  const [devLog, setDevLog] = useState({
-    method: 'GET',
-    url: 'Chưa có request nào',
-    data: null
-  });
-
-  const [isDevPanelOpen, setIsDevPanelOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [route, setRoute] = useState(() => window.location.hash || '#home');
 
   useEffect(() => {
@@ -45,6 +34,8 @@ export default function App() {
       // Scroll main content to top on view change
       const mainContent = document.querySelector('.main-content');
       if (mainContent) mainContent.scrollTop = 0;
+      // Auto-close sidebar on mobile hash change
+      setIsSidebarOpen(false);
     };
     window.addEventListener('hashchange', handleHashChange);
     return () => window.removeEventListener('hashchange', handleHashChange);
@@ -62,11 +53,12 @@ export default function App() {
         slug: movie.slug,
         poster_url: movie.poster_url,
         thumb_url: movie.thumb_url,
-        year: movie.year
+        year: movie.year,
+        apiSource: movie.apiSource
       });
     }
     setWatchlist(updatedList);
-    localStorage.setItem('studyflix_watchlist', JSON.stringify(updatedList));
+    localStorage.setItem('sofaflix_watchlist', JSON.stringify(updatedList));
   };
 
   const saveWatchHistory = (movie, episode, currentTime, duration) => {
@@ -83,13 +75,14 @@ export default function App() {
       currentTime: currentTime,
       duration: duration,
       percent: progressPercent,
-      updatedAt: new Date().toISOString()
+      updatedAt: new Date().toISOString(),
+      apiSource: movie.apiSource
     };
 
     setHistory(prev => {
       const filtered = prev.filter(item => item.movieSlug !== movie.slug);
       const updated = [historyItem, ...filtered].slice(0, 30);
-      localStorage.setItem('studyflix_history', JSON.stringify(updated));
+      localStorage.setItem('sofaflix_history', JSON.stringify(updated));
       return updated;
     });
   };
@@ -97,31 +90,14 @@ export default function App() {
   const deleteHistoryItem = (movieSlug) => {
     setHistory(prev => {
       const updated = prev.filter(item => item.movieSlug !== movieSlug);
-      localStorage.setItem('studyflix_history', JSON.stringify(updated));
+      localStorage.setItem('sofaflix_history', JSON.stringify(updated));
       return updated;
     });
   };
 
   const clearHistory = () => {
     setHistory([]);
-    localStorage.removeItem('studyflix_history');
-  };
-
-  const handleApiSourceChange = (source) => {
-    localStorage.setItem('studyflix_api_source', source);
-    setApiSource(source);
-    // Force reload route by triggering fake change
-    const currentHash = window.location.hash;
-    window.location.hash = '';
-    window.location.hash = currentHash || '#home';
-  };
-
-  const logAPIRequest = (method, url) => {
-    setDevLog(prev => ({ ...prev, method, url }));
-  };
-
-  const logAPIResponse = (data) => {
-    setDevLog(prev => ({ ...prev, data }));
+    localStorage.removeItem('sofaflix_history');
   };
 
   const renderView = () => {
@@ -130,11 +106,8 @@ export default function App() {
       return (
         <DetailView
           slug={slug}
-          apiSource={apiSource}
           watchlist={watchlist}
           toggleWatchlist={toggleWatchlist}
-          onLogRequest={logAPIRequest}
-          onLogResponse={logAPIResponse}
         />
       );
     }
@@ -146,11 +119,8 @@ export default function App() {
         <WatchView
           slug={slug}
           episodeSlug={episodeSlug}
-          apiSource={apiSource}
           history={history}
           saveWatchHistory={saveWatchHistory}
-          onLogRequest={logAPIRequest}
-          onLogResponse={logAPIResponse}
         />
       );
     }
@@ -160,9 +130,6 @@ export default function App() {
         <FilterView
           key={`search-${keyword}`}
           searchQuery={keyword}
-          apiSource={apiSource}
-          onLogRequest={logAPIRequest}
-          onLogResponse={logAPIResponse}
         />
       );
     }
@@ -177,11 +144,8 @@ export default function App() {
       case '#home':
         return (
           <HomeView
-            apiSource={apiSource}
             watchlist={watchlist}
             toggleWatchlist={toggleWatchlist}
-            onLogRequest={logAPIRequest}
-            onLogResponse={logAPIResponse}
           />
         );
       case '#phim-le':
@@ -189,9 +153,6 @@ export default function App() {
           <FilterView
             key="phim-le"
             initialType="phim-le"
-            apiSource={apiSource}
-            onLogRequest={logAPIRequest}
-            onLogResponse={logAPIResponse}
           />
         );
       case '#phim-bo':
@@ -199,9 +160,6 @@ export default function App() {
           <FilterView
             key="phim-bo"
             initialType="phim-bo"
-            apiSource={apiSource}
-            onLogRequest={logAPIRequest}
-            onLogResponse={logAPIResponse}
           />
         );
       case '#hoat-hinh':
@@ -209,9 +167,6 @@ export default function App() {
           <FilterView
             key="hoat-hinh"
             initialType="hoat-hinh"
-            apiSource={apiSource}
-            onLogRequest={logAPIRequest}
-            onLogResponse={logAPIResponse}
           />
         );
       case '#phim-chieu-rap':
@@ -219,9 +174,6 @@ export default function App() {
           <FilterView
             key="phim-chieu-rap"
             initialType="phim-chieu-rap"
-            apiSource={apiSource}
-            onLogRequest={logAPIRequest}
-            onLogResponse={logAPIResponse}
           />
         );
       case '#tv-shows':
@@ -229,25 +181,18 @@ export default function App() {
           <FilterView
             key="tv-shows"
             initialType="tv-shows"
-            apiSource={apiSource}
-            onLogRequest={logAPIRequest}
-            onLogResponse={logAPIResponse}
           />
         );
       case '#danh-muc':
         return (
           <FilterView
             key="danh-muc"
-            apiSource={apiSource}
-            onLogRequest={logAPIRequest}
-            onLogResponse={logAPIResponse}
           />
         );
       case '#favorites':
         return (
           <FavoritesView
             watchlist={watchlist}
-            apiSource={apiSource}
           />
         );
       case '#history':
@@ -256,17 +201,13 @@ export default function App() {
             history={history}
             clearHistory={clearHistory}
             deleteHistoryItem={deleteHistoryItem}
-            apiSource={apiSource}
           />
         );
       default:
         return (
           <HomeView
-            apiSource={apiSource}
             watchlist={watchlist}
             toggleWatchlist={toggleWatchlist}
-            onLogRequest={logAPIRequest}
-            onLogResponse={logAPIResponse}
           />
         );
     }
@@ -288,16 +229,23 @@ export default function App() {
       <Sidebar
         activeNav={activeNav}
         watchlistCount={watchlist.length}
-        isDevPanelOpen={isDevPanelOpen}
-        setIsDevPanelOpen={setIsDevPanelOpen}
+        isSidebarOpen={isSidebarOpen}
+        setIsSidebarOpen={setIsSidebarOpen}
       />
+
+      {/* Mobile Sidebar overlay */}
+      {isSidebarOpen && (
+        <div 
+          className="sidebar-overlay" 
+          onClick={() => setIsSidebarOpen(false)}
+        ></div>
+      )}
 
       {/* Main Content Area */}
       <main className="main-content">
         {/* Top Header */}
         <Header
-          apiSource={apiSource}
-          onApiSourceChange={handleApiSourceChange}
+          onToggleSidebar={() => setIsSidebarOpen(prev => !prev)}
         />
 
         {/* View Content */}
@@ -305,17 +253,10 @@ export default function App() {
 
         {/* Footer */}
         <footer className="main-footer">
-          <p>&copy; 2026 StudyFlix Project. Được phát triển dành riêng cho mục đích học tập & nghiên cứu API truyền thông.</p>
-          <p className="disclaimer">Tuyên bố miễn trừ trách nhiệm: Dữ liệu và liên kết truyền thông được cung cấp từ API bên thứ ba. Dự án phi thương mại.</p>
+          <p>&copy; 2026 Studyflix Hub. Được thiết kế tối ưu và đồng bộ đa nguồn dữ liệu giải trí học tập.</p>
+          <p className="disclaimer">Tuyên bố miễn trừ trách nhiệm: Nội dung truyền thông được lấy từ các API bên thứ ba phục vụ cho nhu cầu học tập và nghiên cứu phi thương mại.</p>
         </footer>
       </main>
-
-      {/* Developer Panel */}
-      <DevPanel
-        devLog={devLog}
-        isOpen={isDevPanelOpen}
-        onClose={() => setIsDevPanelOpen(false)}
-      />
     </div>
   );
 }

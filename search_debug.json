@@ -1,0 +1,32 @@
+{
+  "phimapi_search": {
+    "status": "success",
+    "keys": [
+      "seoOnPage",
+      "breadCrumb",
+      "titlePage",
+      "items",
+      "params",
+      "type_list",
+      "APP_DOMAIN_FRONTEND",
+      "APP_DOMAIN_CDN_IMAGE"
+    ],
+    "items_count": 24,
+    "totalPages": 4
+  },
+  "ophim_search": {
+    "status": "success",
+    "keys": [
+      "seoOnPage",
+      "breadCrumb",
+      "titlePage",
+      "items",
+      "params",
+      "type_list",
+      "APP_DOMAIN_FRONTEND",
+      "APP_DOMAIN_CDN_IMAGE"
+    ],
+    "items_count": 24,
+    "totalPages": null
+  }
+}

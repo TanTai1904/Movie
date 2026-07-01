@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Hls from 'hls.js';
-import { fetchAPI, fixImageURL } from '../utils.js';
+import { fetchUnifiedDetail, fetchUnifiedNewMovies, fixImageURL } from '../utils.js';
 
-export default function WatchView({ slug, episodeSlug, apiSource, history, saveWatchHistory, onLogRequest, onLogResponse }) {
+export default function WatchView({ slug, episodeSlug, history, saveWatchHistory, onLogRequest, onLogResponse }) {
   const [movie, setMovie] = useState(null);
   const [episodes, setEpisodes] = useState([]);
   const [episode, setEpisode] = useState(null);
@@ -24,13 +24,13 @@ export default function WatchView({ slug, episodeSlug, apiSource, history, saveW
       setLoading(true);
       setError(null);
       try {
-        const data = await fetchAPI(
-          `/phim/${slug}`,
-          apiSource,
-          false,
-          onLogRequest,
-          onLogResponse
-        );
+        if (onLogRequest) {
+          onLogRequest('GET', 'Unified Multi-Source: Detail (' + slug + ')');
+        }
+        const data = await fetchUnifiedDetail(slug);
+        if (onLogResponse) {
+          onLogResponse(data);
+        }
         if (data && data.movie) {
           setMovie(data.movie);
           const eps = data.episodes || [];
@@ -57,6 +57,13 @@ export default function WatchView({ slug, episodeSlug, apiSource, history, saveW
           if (foundEp) {
             setEpisode(foundEp);
             setActiveServerIdx(serverIdx);
+            
+            // Auto configure playMode: if link_m3u8 is empty but link_embed is present, default to 'embed'
+            if (!foundEp.link_m3u8 && foundEp.link_embed) {
+              setPlayMode('embed');
+            } else {
+              setPlayMode('hls');
+            }
           } else {
             setError('Không tìm thấy tập phim tương ứng.');
           }
@@ -65,26 +72,26 @@ export default function WatchView({ slug, episodeSlug, apiSource, history, saveW
         }
       } catch (err) {
         console.error('Error fetching watch movie detail:', err);
-        setError('Lỗi tải dữ liệu tập phim từ API.');
+        setError('Lỗi tải dữ liệu tập phim từ các máy chủ API.');
       } finally {
         setLoading(false);
       }
     }
     loadMovieAndEpisode();
-  }, [slug, episodeSlug, apiSource]);
+  }, [slug, episodeSlug]);
 
   // 2. Fetch related movies (Newly updated page 2 as simple recommendations)
   useEffect(() => {
     async function loadRelated() {
       try {
-        const data = await fetchAPI('/danh-sach/phim-moi-cap-nhat?page=2', apiSource, false);
+        const data = await fetchUnifiedNewMovies(2);
         setRelatedMovies(data.items?.slice(0, 6) || []);
       } catch (e) {
         console.error('Error loading related movies:', e);
       }
     }
     loadRelated();
-  }, [apiSource]);
+  }, []);
 
   // 3. Initialize HLS video stream
   useEffect(() => {
@@ -310,8 +317,8 @@ export default function WatchView({ slug, episodeSlug, apiSource, history, saveW
                     setVideoLoading(true);
                   }}
                 >
-                  <option value="hls">Server HLS (Khuyên Dùng, Hls.js)</option>
-                  <option value="embed">Server Nhúng (Dự Phòng, Iframe)</option>
+                  <option value="hls" disabled={!episode.link_m3u8}>Server HLS (Khuyên Dùng, Hls.js)</option>
+                  <option value="embed" disabled={!episode.link_embed}>Server Nhúng (Dự Phòng, Iframe)</option>
                 </select>
               </div>
             </div>
@@ -364,10 +371,10 @@ export default function WatchView({ slug, episodeSlug, apiSource, history, saveW
                   >
                     <img
                       className="sidebar-movie-thumb"
-                      src={fixImageURL(rec.poster_url || rec.thumb_url, apiSource)}
+                      src={fixImageURL(rec.poster_url || rec.thumb_url, rec.apiSource)}
                       alt={rec.name}
                       onError={(e) => {
-                        e.target.src = 'https://placehold.co/300x450/1a1e24/66fcf1?text=No+Image';
+                        e.target.src = '/default-poster.png';
                       }}
                     />
                     <div className="sidebar-movie-info">

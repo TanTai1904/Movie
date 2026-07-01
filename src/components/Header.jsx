@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-export default function Header({ apiSource, onApiSourceChange }) {
+export default function Header({ onToggleSidebar }) {
   const [query, setQuery] = useState('');
 
   // Update query state if url hash changes (e.g. going back to home clears query)
@@ -34,6 +34,16 @@ export default function Header({ apiSource, onApiSourceChange }) {
 
   return (
     <header className="top-header">
+      {/* Mobile Toggle Button on left */}
+      <button 
+        type="button" 
+        className="hamburger-menu" 
+        onClick={onToggleSidebar}
+        aria-label="Mở Menu"
+      >
+        <i className="bx bx-menu"></i>
+      </button>
+
       <div className="header-search">
         <i className="bx bx-search search-icon"></i>
         <input
@@ -50,22 +60,11 @@ export default function Header({ apiSource, onApiSourceChange }) {
           </button>
         )}
       </div>
+
       <div className="header-profile">
-        <div className="header-source-selector">
-          <i className="bx bx-cylinder select-icon"></i>
-          <select
-            id="api-source-select"
-            className="form-select-sm header-select"
-            value={apiSource}
-            onChange={(e) => onApiSourceChange(e.target.value)}
-          >
-            <option value="phimapi">Nguồn PhimAPI</option>
-            <option value="ophim">Nguồn Rổ Phim (OPhim)</option>
-          </select>
-        </div>
         <div className="profile-info">
-          <span className="user-name">Guest Student</span>
-          <span className="user-role">Developer Mode</span>
+          <span className="user-name">Guest Viewer</span>
+          <span className="user-role">StudyFlix User</span>
         </div>
         <div className="profile-avatar">
           <i className="bx bx-user"></i>

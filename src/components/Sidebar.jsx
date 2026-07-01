@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function Sidebar({ activeNav, watchlistCount, isDevPanelOpen, setIsDevPanelOpen }) {
+export default function Sidebar({ activeNav, watchlistCount, isSidebarOpen, setIsSidebarOpen }) {
   const menuItems = [
     { id: 'home', hash: '#home', icon: 'bx-home-alt-2', label: 'Trang Chủ' },
     { id: 'phim-le', hash: '#phim-le', icon: 'bx-movie-play', label: 'Phim Lẻ' },
@@ -12,10 +12,13 @@ export default function Sidebar({ activeNav, watchlistCount, isDevPanelOpen, set
   ];
 
   return (
-    <aside className="sidebar">
-      <div className="brand" onClick={() => window.location.hash = '#home'} style={{ cursor: 'pointer' }}>
-        <i className="bx bx-play-circle logo-icon"></i>
-        <span className="logo-text">Study<span>Flix</span></span>
+    <aside className={`sidebar ${isSidebarOpen ? 'open' : ''}`}>
+      <div className="brand" onClick={() => {
+        window.location.hash = '#home';
+        setIsSidebarOpen(false);
+      }} style={{ cursor: 'pointer' }}>
+        <i className="bx bx-movie-play logo-icon"></i>
+        <span className="logo-text">Study<span>flix</span></span>
       </div>
       <nav className="nav-menu">
         {menuItems.map(item => (
@@ -24,6 +27,7 @@ export default function Sidebar({ activeNav, watchlistCount, isDevPanelOpen, set
             href={item.hash}
             className={`nav-link ${activeNav === item.id ? 'active' : ''}`}
             data-nav={item.id}
+            onClick={() => setIsSidebarOpen(false)}
           >
             <i className={`bx ${item.icon}`}></i>
             <span>{item.label}</span>
@@ -34,6 +38,7 @@ export default function Sidebar({ activeNav, watchlistCount, isDevPanelOpen, set
           href="#favorites"
           className={`nav-link ${activeNav === 'favorites' ? 'active' : ''}`}
           data-nav="favorites"
+          onClick={() => setIsSidebarOpen(false)}
         >
           <i className="bx bx-heart"></i>
           <span>Yêu Thích</span>
@@ -45,21 +50,12 @@ export default function Sidebar({ activeNav, watchlistCount, isDevPanelOpen, set
           href="#history"
           className={`nav-link ${activeNav === 'history' ? 'active' : ''}`}
           data-nav="history"
+          onClick={() => setIsSidebarOpen(false)}
         >
           <i className="bx bx-history"></i>
           <span>Lịch Sử</span>
         </a>
       </nav>
-      <div className="sidebar-footer">
-        <button
-          id="btn-toggle-dev"
-          className={`btn-dev-mode ${isDevPanelOpen ? 'active' : ''}`}
-          onClick={() => setIsDevPanelOpen(prev => !prev)}
-        >
-          <i className="bx bx-code-alt"></i>
-          <span>Developer Panel</span>
-        </button>
-      </div>
     </aside>
   );
 }

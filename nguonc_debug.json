@@ -1,0 +1,408 @@
+{
+  "detail": {
+    "status": "success",
+    "movie": {
+      "id": "21d58309d158bcb0e3e70a3827221e7c",
+      "name": "Ngôi Trường Xác Sống",
+      "slug": "ngoi-truong-xac-song",
+      "original_name": "All Of Us Are Dead",
+      "thumb_url": "https://phim.nguonc.com/public/images/Post/7/ngoi-truong-xac-song.jpg",
+      "poster_url": "https://phim.nguonc.com/public/images/Post/7/ngoi-truong-xac-song-1.jpg",
+      "created": "2023-07-15T11:15:45.000000Z",
+      "modified": "2024-09-26T07:48:39.000000Z",
+      "description": "Một trường cấp ba trở thành điểm bùng phát virus thây ma. Các học sinh mắc kẹt phải nỗ lực thoát ra – hoặc biến thành một trong những người nhiễm bệnh hung tợn.",
+      "total_episodes": 12,
+      "current_episode": "Hoàn tất (12/12)",
+      "time": "60 phút/tập",
+      "quality": "HD",
+      "language": "Vietsub + Lồng Tiếng",
+      "director": "Kim Nam-Soo, J.Q. Lee",
+      "casts": "Park Ji Hu, Yoon Chan Young, Cho Yi Hyun",
+      "category": {
+        "1": {
+          "group": {
+            "id": "c4ca4238a0b923820dcc509a6f75849b",
+            "name": "Định dạng"
+          },
+          "list": [
+            {
+              "id": "eccbc87e4b5ce2fe28308fd9f2a7baf3",
+              "name": "Phim bộ"
+            }
+          ]
+        },
+        "2": {
+          "group": {
+            "id": "1679091c5a880faf6fb5e6087eb1b2dc",
+            "name": "Thể loại"
+          },
+          "list": [
+            {
+              "id": "8f14e45fceea167a5a36dedd4bea2543",
+              "name": "Hành Động"
+            },
+            {
+              "id": "c51ce410c124a10e0db5e4b97fc2af39",
+              "name": "Chính Kịch"
+            },
+            {
+              "id": "9bf31c7ff062936a96d3c8bd1f8f2ff3",
+              "name": "Giả Tưởng"
+            },
+            {
+              "id": "70efdf2ec9b086079795c442636b55fb",
+              "name": "Kinh Dị"
+            }
+          ]
+        },
+        "3": {
+          "group": {
+            "id": "8e296a067a37563370ded05f5a3bf3ec",
+            "name": "Năm"
+          },
+          "list": [
+            {
+              "id": "6c8349cc7260ae62e3b1396831a8398f",
+              "name": "2022"
+            }
+          ]
+        },
+        "4": {
+          "group": {
+            "id": "67c6a1e7ce56d3d6fa748ab6d9af3fd7",
+            "name": "Quốc gia"
+          },
+          "list": [
+            {
+              "id": "32bb90e8976aab5298d5da10fe66f21d",
+              "name": "Hàn Quốc"
+            }
+          ]
+        }
+      },
+      "episodes": [
+        {
+          "server_name": "Vietsub #1",
+          "items": [
+            {
+              "name": "1",
+              "slug": "tap-1",
+              "embed": "https://embed12.streamc.xyz/embed.php?hash=d2a1299393c04c0cde1e52ce812682a6"
+            },
+            {
+              "name": "2",
+              "slug": "tap-2",
+              "embed": "https://embed12.streamc.xyz/embed.php?hash=d1077933db10a7f0c01737e66420d13f"
+            },
+            {
+              "name": "3",
+              "slug": "tap-3",
+              "embed": "https://embed12.streamc.xyz/embed.php?hash=57693452be3bbb7b3f76d5eb587d718d"
+            },
+            {
+              "name": "4",
+              "slug": "tap-4",
+              "embed": "https://embed12.streamc.xyz/embed.php?hash=141989a3731a50c136a1ba7f5a3cb988"
+            },
+            {
+              "name": "5",
+              "slug": "tap-5",
+              "embed": "https://embed12.streamc.xyz/embed.php?hash=a0a76b3db8501b48e6e1cc461f7de3ac"
+            },
+            {
+              "name": "6",
+              "slug": "tap-6",
+              "embed": "https://embed12.streamc.xyz/embed.php?hash=c8cfb1f51f88dc150b1c175ea99a08d1"
+            },
+            {
+              "name": "7",
+              "slug": "tap-7",
+              "embed": "https://embed12.streamc.xyz/embed.php?hash=df79051058fadff188d85b9f4c5f6f6c"
+            },
+            {
+              "name": "8",
+              "slug": "tap-8",
+              "embed": "https://embed12.streamc.xyz/embed.php?hash=2027e00e238288d98d7f69df719a6636"
+            },
+            {
+              "name": "9",
+              "slug": "tap-9",
+              "embed": "https://embed12.streamc.xyz/embed.php?hash=9dd6cd2a4a2d2bdc8ca1438f7d23ee24"
+            },
+            {
+              "name": "10",
+              "slug": "tap-10",
+              "embed": "https://embed12.streamc.xyz/embed.php?hash=8f01effa26f03a0c3e2037086415d6c4"
+            },
+            {
+              "name": "11",
+              "slug": "tap-11",
+              "embed": "https://embed12.streamc.xyz/embed.php?hash=99940fa5752ac775174020390f9eb4a6"
+            },
+            {
+              "name": "12",
+              "slug": "tap-12",
+              "embed": "https://embed12.streamc.xyz/embed.php?hash=c4fdeb543f2790680b4abf15b8516ba8"
+            }
+          ]
+        },
+        {
+          "server_name": "Lồng Tiếng #1",
+          "items": [
+            {
+              "name": "1",
+              "slug": "tap-1",
+              "embed": "https://embed11.streamc.xyz/embed.php?hash=46fe3a2560ce1d43098259ecf5fe512e"
+            },
+            {
+              "name": "2",
+              "slug": "tap-2",
+              "embed": "https://embed11.streamc.xyz/embed.php?hash=8fca4e9f47c2b26e0c343d170b9e7493"
+            },
+            {
+              "name": "3",
+              "slug": "tap-3",
+              "embed": "https://embed11.streamc.xyz/embed.php?hash=4d685ac5a7f0367d124be24d910c4208"
+            },
+            {
+              "name": "4",
+              "slug": "tap-4",
+              "embed": "https://embed11.streamc.xyz/embed.php?hash=7b894397a1aaf7c8417134ca556c8c82"
+            },
+            {
+              "name": "5",
+              "slug": "tap-5",
+              "embed": "https://embed11.streamc.xyz/embed.php?hash=e1cba32c3add525f436afefc98751edb"
+            },
+            {
+              "name": "6",
+              "slug": "tap-6",
+              "embed": "https://embed11.streamc.xyz/embed.php?hash=9bbe10b5aee7a9405ad371f67047e074"
+            },
+            {
+              "name": "7",
+              "slug": "tap-7",
+              "embed": "https://embed11.streamc.xyz/embed.php?hash=d36d73efb6dfe4b91c3d8830cb31b1c7"
+            },
+            {
+              "name": "8",
+              "slug": "tap-8",
+              "embed": "https://embed11.streamc.xyz/embed.php?hash=7b84ee857b9d1945057d80a34a03e779"
+            },
+            {
+              "name": "9",
+              "slug": "tap-9",
+              "embed": "https://embed11.streamc.xyz/embed.php?hash=82bda61bf7f62044f167d13484d823af"
+            },
+            {
+              "name": "10",
+              "slug": "tap-10",
+              "embed": "https://embed11.streamc.xyz/embed.php?hash=97e3ce2c8980df99a447d86aeea31198"
+            },
+            {
+              "name": "11",
+              "slug": "tap-11",
+              "embed": "https://embed11.streamc.xyz/embed.php?hash=7a038d4c299000a3734f78cc7172ab18"
+            },
+            {
+              "name": "12",
+              "slug": "tap-12",
+              "embed": "https://embed11.streamc.xyz/embed.php?hash=39872e058a9fe9a646b041a9f8d26c4c"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "search": {
+    "status": "success",
+    "paginate": {
+      "current_page": 1,
+      "total_page": 16,
+      "total_items": 155,
+      "items_per_page": 10
+    },
+    "items": [
+      {
+        "id": "eyJpdiI6ImVPRmpPRm1MZ2EzSnJUWlZSZjZDQnc9PSIsInZhbHVlIjoibXBlSHAwNXNlOXNFZG1aWmFIOHVSdz09IiwibWFjIjoiMzUwMzQ3NjlmMDQyYzdjMjg4MTY1YzZjM2M5M2RhOTZhNDllOWE5OGIwOGFmOWEzNTRiZjVlNDY5N2NiYjU1MyJ9",
+        "name": "Trường Học Thiện và Ác",
+        "slug": "truong-hoc-thien-va-ac",
+        "original_name": "The School for Good and Evil",
+        "thumb_url": "https://phim.nguonc.com/public/images/Film/ypwTbN8T8DsnAoaB7KSgVPKilFi.jpg",
+        "poster_url": "https://phim.nguonc.com/public/images/Film/tSxbUnrnWlR5dQvUgqMI7sACmFD.jpg",
+        "created": "2023-06-27T13:26:00.000000Z",
+        "modified": "2025-05-02T18:06:57.000000Z",
+        "description": "Mối quan hệ của đôi bạn thân Sophie và Agatha bị thử thách khi họ bị đưa đến ngôi trường phép thuật dành cho anh hùng và ác nhân tương lai trong truyện cổ tích.",
+        "total_episodes": 1,
+        "current_episode": "FULL",
+        "time": "146 phút",
+        "quality": "HD",
+        "language": "Vietsub + Lồng Tiếng",
+        "director": "Paul Feig",
+        "casts": "Sofia Wylie, Sophia Anne Caruso, Kerry Washington"
+      },
+      {
+        "id": "eyJpdiI6IkdvKzUwVE90MWdKdmt4Y09UQjVkRmc9PSIsInZhbHVlIjoiUjBoL0x3b1ZwNnZoUGYvYU5wdWt5QT09IiwibWFjIjoiYjIzNzEwMDRiZWRiYjJjNjBmNWEzY2JiYzdkMmM1MjNiMzY0MjRjMGRlOWNkNWVhMTgzNjg2NGY4OGQ2NTk5MyJ9",
+        "name": "Trường Công giáo",
+        "slug": "truong-cong-giao",
+        "original_name": "The Catholic School",
+        "thumb_url": "https://phim.nguonc.com/public/images/Film/4r7ssCjVvUg5yHFivv3OUmIWNNU.jpg",
+        "poster_url": "https://phim.nguonc.com/public/images/Film/kYJNrQ5say16fewLCdOVGjNpsX9.jpg",
+        "created": "2023-06-27T14:23:24.000000Z",
+        "modified": "2024-11-14T04:56:17.000000Z",
+        "description": "Năm 1975, ba học sinh tại một trường nam sinh cấp ba Công giáo ở Rome gây ra một tội ác khiến các bạn học và cộng đồng chấn động. Dựa trên các sự kiện có thật.",
+        "total_episodes": 1,
+        "current_episode": "FULL",
+        "time": "107 phút",
+        "quality": "HD",
+        "language": "Vietsub",
+        "director": "Stefano Mordini",
+        "casts": "Benedetta Porcaroli, Giulio Pranno, Emanuele Maria Di Stefano"
+      },
+      {
+        "id": "eyJpdiI6Ikd5ckZ5SmNiWS92VHVpMElYeUp5emc9PSIsInZhbHVlIjoiOUFrYkZXRmg0MHZCWnFwdmowVHQwQT09IiwibWFjIjoiMTAyZDA1MjQ4MTkzYTg1ZmMyNjdmOGFmNGM0MTUxOTk5MjNhYjRkMjc2NjllMDNhMmI1ZTZkMzJlZjRmMTZiMCJ9",
+        "name": "Cự Xà Trường Nữ Sinh",
+        "slug": "cu-xa-truong-nu-sinh",
+        "original_name": "Rising Boas In A Girl's School",
+        "thumb_url": "https://phim.nguonc.com/public/images/Film/xR7gW2Oj8Qku5m82SvWfwTbwopM.jpg",
+        "poster_url": "https://phim.nguonc.com/public/images/Film/kfcnQeLMZHJ8b0nK4qCmFr83F5d.jpg",
+        "created": "2023-06-27T16:36:04.000000Z",
+        "modified": "2025-08-30T12:38:49.000000Z",
+        "description": "Cự Xà Trường Nữ Sinh kể về một cơ sở nuôi rắn bí mật ở ngoại ô Hải Tây. Ông chủ cho nó ăn thức ăn có hàm lượng hormone cao một cách liều lĩnh, và đàn rắn dần dần đột biến. Một ngày nọ, một bầy rắn hung dữ thoát ra khỏi lồng và bắt đầu điên cuồng tấn công con người trong cơ sở nuôi rắn. Đồng thời, đàn rắn cũng bò về phía một trường hàng không cách cơ sở nuôi rắn không xa. Nhà trường đang chuẩn bị cho lễ tốt nghiệp, sinh viên không biết mình sắp gặp nguy hiểm vẫn tiến hành cuộc thi của trường. Đàn rắn bò vào nhiều nơi khác nhau của trường, một số nữ sinh bị rắn cắn, tiếng la hét khiến cả khu ký túc xá giật mình, các nữ sinh bỏ chạy tán loạn.",
+        "total_episodes": 1,
+        "current_episode": "FULL",
+        "time": "88 phút",
+        "quality": "HD",
+        "language": "Vietsub + Thuyết Minh",
+        "director": "Guo Yulong",
+        "casts": "Peng Bo, Zheng Long, Shi Xuanru"
+      },
+      {
+        "id": "eyJpdiI6Im5OS0VrQjZDbkVwQVJ2TjV1WEFGOXc9PSIsInZhbHVlIjoidTM1RUVseStibWFwUjg0Q3RlZ3VsUT09IiwibWFjIjoiYjZlMjNmZTljZDQxMzdkZTc2Mzc5OWE1MmI1NDYzZjQ4ZWQzMjAxMzk5Yjg4OTZjM2UyZGFjY2FmNTNmZjVlNSJ9",
+        "name": "Snoopy: Trường Học Của Lucy",
+        "slug": "snoopy-truong-hoc-cua-lucy",
+        "original_name": "Snoopy Presents: Lucy's School",
+        "thumb_url": "https://phim.nguonc.com/public/images/Film/66HOwpRkJcHbowQZQJ0KKD57t2W.jpg",
+        "poster_url": "https://phim.nguonc.com/public/images/Film/67eYc8TlD7GMlmWkQjKU9kFjB9c.jpg",
+        "created": "2023-06-28T00:03:50.000000Z",
+        "modified": "2023-07-08T04:31:27.000000Z",
+        "description": "Chương trình đề cập đến những lo lắng đến với ngày đầu tiên đi học, đặc biệt là đối với trẻ em bắt đầu năm học tại một ngôi trường mới. Tinh tế hơn, nó khuyến khích lên tiếng chống lại thông tin sai lệch. Lucy và các thành viên còn lại của Peanuts nhận ra rằng công việc của một giáo viên là khó khăn và không được đánh giá cao, và chương trình kết thúc bằng cách tri ân những giáo viên đã giúp học sinh dũng cảm và theo đuổi ước mơ của mình.",
+        "total_episodes": 1,
+        "current_episode": "FULL",
+        "time": "38 phút",
+        "quality": "HD",
+        "language": "Vietsub",
+        "director": "Raymond S. Persi",
+        "casts": "Etienne Kellici, Isabella Leo, Wyatt White"
+      },
+      {
+        "id": "eyJpdiI6Ikg5aGZmcUxBUE94QTkrODhRbWFCT0E9PSIsInZhbHVlIjoiWjRIOStqNSt6Y0p4eVhHa3k5YlpCZz09IiwibWFjIjoiODAwNWM3OGZiNTg5MDEzOTY4ODVmY2Q2YzcyNDJiM2EyNmI3NjJkYjRlZWU4NzRmYmI1ZTI1YjYyYmE5YTEwNCJ9",
+        "name": "Mahouka Koukou no Rettousei: Tsuioku-hen",
+        "slug": "mahouka-koukou-no-rettousei-tsuioku-hen",
+        "original_name": "The Irregular at Magic High School: Reminiscence Arc",
+        "thumb_url": "https://phim.nguonc.com/public/images/Film/3398.jpg",
+        "poster_url": "https://phim.nguonc.com/public/images/Film/3398.jpg",
+        "created": "2023-06-29T17:40:25.000000Z",
+        "modified": "2024-06-03T05:06:37.000000Z",
+        "description": "Cặp anh em cực kỳ tài năng Tatsuya và Miyuki Shiba tỏa sáng theo cách riêng của họ khi họ bắt đầu năm thứ hai tại Trường Trung học Đệ nhất, học viện hàng đầu dành cho các pháp sư. Được coi là cặp đôi không thể tách rời, dường như không thể tưởng tượng được rằng mối quan hệ yêu thương của họ không tồn tại chỉ bốn năm trước.",
+        "total_episodes": 1,
+        "current_episode": "FULL",
+        "time": "71 phút",
+        "quality": "HD",
+        "language": "Vietsub",
+        "director": "Risako Yoshida",
+        "casts": "Yuichi Nakamura, Saori Hayami, Kikuko Inoue"
+      },
+      {
+        "id": "eyJpdiI6IlY2cGc1d2lyUHkxUFZmLzJnRmM4Q0E9PSIsInZhbHVlIjoiZDFHOVhlTWVIV21meVFjNndmOW9mdz09IiwibWFjIjoiNjVlMTJkN2M5YzBhZjZkODY1MzRiMDQxNGNjNWRjMTFlYTJkYmE2YTcyY2YxY2I0NTIyODg3YzhhMjI2NjE0ZSJ9",
+        "name": "Tân Trường Học Uy Long",
+        "slug": "tan-truong-hoc-uy-long",
+        "original_name": "Fight Back To School",
+        "thumb_url": "https://phim.nguonc.com/public/images/Film/basxYBCKP2gYW1UN0o0wFOgEPk.jpg",
+        "poster_url": "https://phim.nguonc.com/public/images/Film/kJ7IqOutglWkkOG7dOzXxAxq5EI.jpg",
+        "created": "2023-07-01T05:31:31.000000Z",
+        "modified": "2023-07-11T09:07:23.000000Z",
+        "description": "Hoàng Tiểu Quý, nhân chứng của một vụ án trọng tài tại một thành phố Đông Nam Á, bất ngờ lẩn trốn. Trương Hạo, một cảnh sát đặc nhiệm nằm vùng trong một ngôi trường quý tốc quốc tế, thử tìm Hoàng Tiểu Quý qua tiếp cận Hoàng Anh, con gái của Hoàng Tiểu Quý. Bên cạnh đó, tập đoàn tội phạm sai sát thủ chờ thời cơ bắt cóc Hoàng Anh. Tên phản bội giữa cảnh sát, sát thủ bên ngoài và sự phản kháng của Hoàng Anh đều khiếu Trương Hạo rơi vào cảnh khó. Đại chiến đầy nguy cơ sắp bắt đầu, Trương Hạo sẽ ứng đối như thế nào?",
+        "total_episodes": 1,
+        "current_episode": "FULL",
+        "time": "89 phút",
+        "quality": "HD",
+        "language": "Vietsub",
+        "director": "Zhang Hao",
+        "casts": "Zhang Hao, He Huan, Gabriel Wong"
+      },
+      {
+        "id": "eyJpdiI6ImhhUndwSWpLT2VmSEV4QWpVZ05GNFE9PSIsInZhbHVlIjoiTjdhbENqY2hSbFdWVVdpU2MzYUFlQT09IiwibWFjIjoiZDRjYzg3ODUxMDNkYjZkYTI3YjhlMzQyMmJhMmYyNjhjZTAxZmVmMWJhZDZmMWRkNmE2Y2RjNDA3OGIzZWFhNiJ9",
+        "name": "Hội Diễn Âm Nhạc 3: Lễ Tốt Nghiệp",
+        "slug": "hoi-dien-am-nhac-3-le-tot-nghiep",
+        "original_name": "High School Musical 3: Senior Year",
+        "thumb_url": "https://phim.nguonc.com/public/images/Film/dkuQGN3hU350nOm5KSmkrV5WPEr.jpg",
+        "poster_url": "https://phim.nguonc.com/public/images/Film/spyZFUG0lR6FEbvMn3YBcxT8vdx.jpg",
+        "created": "2023-07-01T10:11:11.000000Z",
+        "modified": "2023-07-11T15:55:01.000000Z",
+        "description": "Khi còn là học sinh cuối cấp trung học, Troy và Gabriella phải vật lộn với ý tưởng phải xa nhau khi đại học đến gần. Cùng với những thành viên còn lại của Wildcats, họ biểu diễn một vở nhạc kịch mùa xuân để nói lên những trải nghiệm, hy vọng và nỗi sợ hãi về tương lai của họ.",
+        "total_episodes": 1,
+        "current_episode": "FULL",
+        "time": "117 phút",
+        "quality": "HD",
+        "language": "Vietsub",
+        "director": "Kenny Ortega",
+        "casts": "Zac Efron, Vanessa Hudgens, Ashley Tisdale"
+      },
+      {
+        "id": "eyJpdiI6Ik9UM3FJb3lqWGFidVRqRnJjUHVqeFE9PSIsInZhbHVlIjoiSkdGTGNoWlROVEJpanc4TjRIWlBOUT09IiwibWFjIjoiNGU1MTZlNDVmMTRkYzUzNmI1MmI2OGIyY2VlZTdlNWRkMTM0ZGRkMWQ4MDc2ZDMwZDJlYjAxNjQ1NTQ3ZDg2MCJ9",
+        "name": "Hội Diễn Âm Nhạc 2",
+        "slug": "hoi-dien-am-nhac-2",
+        "original_name": "High School Musical 2",
+        "thumb_url": "https://phim.nguonc.com/public/images/Film/MV5BNjI5ODI4NTc1MF5BMl5BanBnXkFtZTgwMDg3ODYzMjE@._V1_.jpg",
+        "poster_url": "https://phim.nguonc.com/public/images/Film/MV5BMTQ2Mjg1Mzk0Nl5BMl5BanBnXkFtZTYwMjE0MjM3._V1_.jpg",
+        "created": "2023-07-01T10:17:40.000000Z",
+        "modified": "2023-07-07T05:57:17.000000Z",
+        "description": "Trường học nghỉ hè và East High Wildcats đã sẵn sàng tận hưởng khoảng thời gian trong đời sau khi nhận được công việc tại một câu lạc bộ giàu có ở vùng quê thuộc sở hữu của gia đình Sharpay và Ryan.",
+        "total_episodes": 1,
+        "current_episode": "FULL",
+        "time": "1h 44m",
+        "quality": "HD",
+        "language": "Vietsub",
+        "director": "Kenny Ortega",
+        "casts": "Zac Efron, Vanessa Hudgens, Ashley Tisdale"
+      },
+      {
+        "id": "eyJpdiI6IjYvY0FndjQrQ1o4K2d4MzU2RjhIRkE9PSIsInZhbHVlIjoiT0lFOHVWTFVLQUVZSk5JWWNqWHNFQT09IiwibWFjIjoiY2VmMGRjZTljYWZmNjBhNzRkZDZlMTYxMzQ5YThmNWY2MjFhMjBjY2JiODQzZWQ0YTMyZjA4Nzc0ZjEwNjIzZiJ9",
+        "name": "Hội Diễn Âm Nhạc 1",
+        "slug": "hoi-dien-am-nhac-1",
+        "original_name": "High School Musical",
+        "thumb_url": "https://phim.nguonc.com/public/images/Film/MV5BZmQ3MWEyNTYtOTY1OC00MTljLWI3OGUtMmU1ZDc2OTYxNDQ4L2ltYWdlL2ltYWdlXkEyXkFqcGdeQXVyMTczNjQwOTY@._V1_.jpg",
+        "poster_url": "https://phim.nguonc.com/public/images/Film/MV5BMTQ1Njc4MjYzNF5BMl5BanBnXkFtZTYwMzA3Mzc3._V1_.jpg",
+        "created": "2023-07-01T10:30:31.000000Z",
+        "modified": "2023-07-07T10:06:25.000000Z",
+        "description": "Một vận động viên trung học nổi tiếng và một cô gái có năng khiếu học tập nhận vai trong vở nhạc kịch của trường và nảy sinh tình bạn đe dọa đến trật tự xã hội của trường trung học East.",
+        "total_episodes": 1,
+        "current_episode": "FULL",
+        "time": "1h 38m",
+        "quality": "HD",
+        "language": "Vietsub",
+        "director": "Kenny Ortega",
+        "casts": "Zac Efron, Vanessa Hudgens, Ashley Tisdale"
+      },
+      {
+        "id": "eyJpdiI6ImVzRjZuRmlOZmd6TGlwM0lvZkNFNHc9PSIsInZhbHVlIjoiL1dFdmhQWVFMZm9lRk04OXRWZnJmQT09IiwibWFjIjoiMjMxMTlmMjQ4ODIxNTI5NzQ1YTI5MWUyZDkxNDQ5Y2Q3YjViZDQ0MWIwZDZiMWJjY2VlOTU3Y2ZlY2NkOTlkOSJ9",
+        "name": "Học Sinh Hạng A",
+        "slug": "hoc-sinh-hang-a",
+        "original_name": "Middle School Student A",
+        "thumb_url": "https://phim.nguonc.com/public/images/Film/KBS_Drama_Special-_Middle_School_Student_A-p01.jpg",
+        "poster_url": "https://phim.nguonc.com/public/images/Film/maxresdefault(1).jpg",
+        "created": "2023-07-01T10:50:00.000000Z",
+        "modified": "2023-07-11T16:39:49.000000Z",
+        "description": "Jo Eunseo vốn là học sinh giỏi nhất trường, là \"Nữ hoàng hổ báo\" trong lớp. Cô gái này nổi tiếng vì không bao giờ để tuột mất danh hiệu thủ khoa toàn trường. Thế nhưng từ ngày cậu học sinh Lee Haejun chuyển đến, cuộc đời cô gái cũng biến đổi theo.Câu chuyện về những học sinh bất chấp tất cả chỉ để bảo vệ vị trí thứ hạng của mình. Những mối quan hệ bạn bè, những vụ ganh ghét đấu đá nhau, những áp lực từ bố mẹ, thầy cô và xã hội, những tình cảm chân thành và đẹp đẽ... Tất cả sẽ có trong bộ phim này",
+        "total_episodes": 1,
+        "current_episode": "FULL",
+        "time": "70 phút",
+        "quality": "HD",
+        "language": "Vietsub",
+        "director": "Baek Sang-Hoon",
+        "casts": "Lee Yul-eum, Kwak Dong-yeon, Lee Hang-na"
+      }
+    ]
+  }
+}

@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import MovieCard from './MovieCard.jsx';
 import SkeletonCard from './SkeletonCard.jsx';
-import { fetchAPI, fixImageURL } from '../utils.js';
+import { fetchUnifiedNewMovies, fetchUnifiedCategory, fetchUnifiedDetail, fixImageURL, fixBackdropURL } from '../utils.js';
 
-export default function HomeView({ apiSource, watchlist, toggleWatchlist, onLogRequest, onLogResponse }) {
+export default function HomeView({ watchlist, toggleWatchlist, onLogRequest, onLogResponse }) {
   const [newMovies, setNewMovies] = useState([]);
   const [phimLe, setPhimLe] = useState([]);
   const [phimBo, setPhimBo] = useState([]);
@@ -24,13 +24,13 @@ export default function HomeView({ apiSource, watchlist, toggleWatchlist, onLogR
     async function loadNewMovies() {
       setLoadingNew(true);
       try {
-        const data = await fetchAPI(
-          `/danh-sach/phim-moi-cap-nhat?page=${currentPage}`,
-          apiSource,
-          false,
-          onLogRequest,
-          onLogResponse
-        );
+        if (onLogRequest) {
+          onLogRequest('GET', 'Unified Multi-Source: New Movies (Page ' + currentPage + ')');
+        }
+        const data = await fetchUnifiedNewMovies(currentPage);
+        if (onLogResponse) {
+          onLogResponse(data);
+        }
         const movies = data.items || [];
         setNewMovies(movies);
         setTotalPages(data.pagination?.totalPages || 1);
@@ -47,7 +47,7 @@ export default function HomeView({ apiSource, watchlist, toggleWatchlist, onLogR
       }
     }
     loadNewMovies();
-  }, [currentPage, apiSource]);
+  }, [currentPage]);
 
   // Load other categories
   useEffect(() => {
@@ -55,22 +55,22 @@ export default function HomeView({ apiSource, watchlist, toggleWatchlist, onLogR
       setLoadingCategories(true);
       try {
         // Phim Lẻ
-        fetchAPI('/v1/api/danh-sach/phim-le?page=1', apiSource, false)
+        fetchUnifiedCategory('phim-le', 1)
           .then(res => setPhimLe(res.data?.items?.slice(0, 5) || []))
           .catch(e => console.error(e));
 
         // Phim Bộ
-        fetchAPI('/v1/api/danh-sach/phim-bo?page=1', apiSource, false)
+        fetchUnifiedCategory('phim-bo', 1)
           .then(res => setPhimBo(res.data?.items?.slice(0, 5) || []))
           .catch(e => console.error(e));
 
         // Hoạt Hình
-        fetchAPI('/v1/api/danh-sach/hoat-hinh?page=1', apiSource, false)
+        fetchUnifiedCategory('hoat-hinh', 1)
           .then(res => setHoatHinh(res.data?.items?.slice(0, 5) || []))
           .catch(e => console.error(e));
 
         // Phim Chiếu Rạp
-        fetchAPI('/v1/api/danh-sach/phim-chieu-rap?page=1', apiSource, false)
+        fetchUnifiedCategory('phim-chieu-rap', 1)
           .then(res => setPhimChieuRap(res.data?.items?.slice(0, 5) || []))
           .catch(e => console.error(e));
       } catch (err) {
@@ -80,18 +80,18 @@ export default function HomeView({ apiSource, watchlist, toggleWatchlist, onLogR
       }
     }
     loadOtherCategories();
-  }, [apiSource]);
+  }, []);
 
   async function loadHeroDetails(movie) {
     setLoadingHero(true);
     try {
-      const detailData = await fetchAPI(
-        `/phim/${movie.slug}`,
-        apiSource,
-        false,
-        onLogRequest,
-        onLogResponse
-      );
+      if (onLogRequest) {
+        onLogRequest('GET', 'Unified Multi-Source: Detail (' + movie.slug + ')');
+      }
+      const detailData = await fetchUnifiedDetail(movie.slug);
+      if (onLogResponse) {
+        onLogResponse(detailData);
+      }
       setHeroMovie(detailData.movie);
     } catch (err) {
       console.error('Error loading hero movie detail:', err);
@@ -134,7 +134,7 @@ export default function HomeView({ apiSource, watchlist, toggleWatchlist, onLogR
         className="hero-banner"
         style={{
           backgroundImage: heroMovie
-            ? `url('${fixImageURL(heroMovie.poster_url || heroMovie.thumb_url, apiSource)}')`
+            ? `url('${fixBackdropURL(heroMovie.poster_url || heroMovie.thumb_url, heroMovie.apiSource)}')`
             : 'none'
         }}
       >
@@ -150,7 +150,7 @@ export default function HomeView({ apiSource, watchlist, toggleWatchlist, onLogR
                 <span className="hero-rating"><i className="bx bxs-star text-gold"></i> --</span>
                 <span className="hero-lang">Vietsub</span>
               </div>
-              <p className="hero-description">Vui lòng chờ trong giây lát khi chúng tôi tải dữ liệu phim nổi bật từ API phim mới cập nhật.</p>
+              <p className="hero-description">Vui lòng chờ trong giây lát khi chúng tôi tải dữ liệu phim nổi bật...</p>
             </>
           ) : (
             heroMovie && (
@@ -213,7 +213,7 @@ export default function HomeView({ apiSource, watchlist, toggleWatchlist, onLogR
             </div>
           ) : (
             newMovies.map(movie => (
-              <MovieCard key={movie.slug} movie={movie} apiSource={apiSource} />
+              <MovieCard key={movie.slug} movie={movie} />
             ))
           )}
         </div>
@@ -236,7 +236,7 @@ export default function HomeView({ apiSource, watchlist, toggleWatchlist, onLogR
             <p className="text-muted">Không có dữ liệu.</p>
           ) : (
             phimLe.map(movie => (
-              <MovieCard key={movie.slug} movie={movie} apiSource={apiSource} />
+              <MovieCard key={movie.slug} movie={movie} />
             ))
           )}
         </div>
@@ -259,7 +259,7 @@ export default function HomeView({ apiSource, watchlist, toggleWatchlist, onLogR
             <p className="text-muted">Không có dữ liệu.</p>
           ) : (
             phimBo.map(movie => (
-              <MovieCard key={movie.slug} movie={movie} apiSource={apiSource} />
+              <MovieCard key={movie.slug} movie={movie} />
             ))
           )}
         </div>
@@ -282,7 +282,7 @@ export default function HomeView({ apiSource, watchlist, toggleWatchlist, onLogR
             <p className="text-muted">Không có dữ liệu.</p>
           ) : (
             hoatHinh.map(movie => (
-              <MovieCard key={movie.slug} movie={movie} apiSource={apiSource} />
+              <MovieCard key={movie.slug} movie={movie} />
             ))
           )}
         </div>
@@ -305,7 +305,7 @@ export default function HomeView({ apiSource, watchlist, toggleWatchlist, onLogR
             <p className="text-muted">Không có dữ liệu.</p>
           ) : (
             phimChieuRap.map(movie => (
-              <MovieCard key={movie.slug} movie={movie} apiSource={apiSource} />
+              <MovieCard key={movie.slug} movie={movie} />
             ))
           )}
         </div>

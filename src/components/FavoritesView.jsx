@@ -1,7 +1,7 @@
 import React from 'react';
 import MovieCard from './MovieCard.jsx';
 
-export default function FavoritesView({ watchlist, apiSource }) {
+export default function FavoritesView({ watchlist }) {
   return (
     <section id="view-favorites" className="content-view active">
       <div className="section-header">
@@ -18,7 +18,7 @@ export default function FavoritesView({ watchlist, apiSource }) {
       ) : (
         <div id="favorites-grid" className="movies-grid">
           {watchlist.map(movie => (
-            <MovieCard key={movie.slug} movie={movie} apiSource={apiSource} />
+            <MovieCard key={movie.slug} movie={movie} />
           ))}
         </div>
       )}

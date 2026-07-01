@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { fetchAPI, fixImageURL } from '../utils.js';
+import { fetchUnifiedDetail, fixImageURL, fixBackdropURL } from '../utils.js';
 
-export default function DetailView({ slug, apiSource, watchlist, toggleWatchlist, onLogRequest, onLogResponse }) {
+export default function DetailView({ slug, watchlist, toggleWatchlist, onLogRequest, onLogResponse }) {
   const [movie, setMovie] = useState(null);
   const [episodes, setEpisodes] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -13,13 +13,13 @@ export default function DetailView({ slug, apiSource, watchlist, toggleWatchlist
       setLoading(true);
       setError(null);
       try {
-        const data = await fetchAPI(
-          `/phim/${slug}`,
-          apiSource,
-          false,
-          onLogRequest,
-          onLogResponse
-        );
+        if (onLogRequest) {
+          onLogRequest('GET', 'Unified Multi-Source: Detail (' + slug + ')');
+        }
+        const data = await fetchUnifiedDetail(slug);
+        if (onLogResponse) {
+          onLogResponse(data);
+        }
         if (data && data.movie) {
           setMovie(data.movie);
           setEpisodes(data.episodes || []);
@@ -29,19 +29,19 @@ export default function DetailView({ slug, apiSource, watchlist, toggleWatchlist
         }
       } catch (err) {
         console.error('Error fetching movie details:', err);
-        setError('Lỗi tải dữ liệu phim từ API.');
+        setError('Lỗi tải dữ liệu phim từ các máy chủ API.');
       } finally {
         setLoading(false);
       }
     }
     loadMovieDetail();
-  }, [slug, apiSource]);
+  }, [slug]);
 
   if (loading) {
     return (
       <section id="view-detail" className="content-view active">
         <div className="detail-container">
-          <div className="detail-backdrop">
+          <div className="detail-backdrop animate-pulse">
             <div className="backdrop-gradient"></div>
             <button className="btn-back-home" onClick={() => window.location.hash = '#home'}>
               <i className="bx bx-left-arrow-alt"></i> Quay Lại
@@ -49,7 +49,7 @@ export default function DetailView({ slug, apiSource, watchlist, toggleWatchlist
           </div>
           <div className="detail-content-wrap">
             <div className="detail-poster-sec">
-              <img id="detail-poster" src="https://placehold.co/300x450/1a1e24/66fcf1?text=Loading" alt="Loading" />
+              <img id="detail-poster" src="/default-poster.png" alt="Loading" />
             </div>
             <div className="detail-info-sec">
               <h1 id="detail-title">Đang tải...</h1>
@@ -104,7 +104,7 @@ export default function DetailView({ slug, apiSource, watchlist, toggleWatchlist
           id="detail-backdrop"
           className="detail-backdrop"
           style={{
-            backgroundImage: `url('${fixImageURL(movie.poster_url || movie.thumb_url, apiSource)}')`
+            backgroundImage: `url('${fixBackdropURL(movie.poster_url || movie.thumb_url, movie.apiSource)}')`
           }}
         >
           <div className="backdrop-gradient"></div>
@@ -116,10 +116,10 @@ export default function DetailView({ slug, apiSource, watchlist, toggleWatchlist
           <div className="detail-poster-sec">
             <img
               id="detail-poster"
-              src={fixImageURL(movie.thumb_url || movie.poster_url, apiSource)}
+              src={fixImageURL(movie.thumb_url || movie.poster_url, movie.apiSource)}
               alt={movie.name}
               onError={(e) => {
-                e.target.src = 'https://placehold.co/300x450/1a1e24/66fcf1?text=No+Image';
+                e.target.src = '/default-poster.png';
               }}
             />
             <button className="btn btn-primary btn-play-now w-100 mt-3" onClick={handlePlayNow}>
@@ -152,8 +152,8 @@ export default function DetailView({ slug, apiSource, watchlist, toggleWatchlist
               </span>
             </div>
             <div className="detail-genres" id="detail-genres">
-              {movie.category?.map(c => (
-                <span key={c.slug} className="genre-tag">
+              {movie.category?.map((c, i) => (
+                <span key={c.slug || i} className="genre-tag">
                   {c.name}
                 </span>
               ))}
@@ -193,7 +193,7 @@ export default function DetailView({ slug, apiSource, watchlist, toggleWatchlist
             {episodes.length > 0 && episodes[0].server_data.length > 0 && (
               <div className="detail-episodes-section mt-4">
                 <h4>Danh Sách Tập Phim</h4>
-                <div id="detail-server-tabs" className="server-tabs">
+                <div id="detail-server-tabs" className="server-tabs animate-fade-in">
                   {episodes.map((server, idx) => (
                     <button
                       key={idx}

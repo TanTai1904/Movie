@@ -1,0 +1,130 @@
+{
+  "ophim_list_status": "success",
+  "slug": "ma-ca-rong-lestat-de-lioncourt",
+  "ophim_detail_status": "success",
+  "ophim_detail_error": null,
+  "ophim_detail": {
+    "status": true,
+    "msg": "",
+    "movie": {
+      "tmdb": {
+        "type": "tv",
+        "id": "323411",
+        "season": 1,
+        "vote_average": 6.8,
+        "vote_count": 17
+      },
+      "imdb": {
+        "id": "",
+        "vote_average": 0,
+        "vote_count": 0
+      },
+      "created": {
+        "time": "2026-06-15T18:12:28.000Z"
+      },
+      "modified": {
+        "time": "2026-07-01T00:18:37.000Z"
+      },
+      "_id": "6a2fde1cf7f43ec64efa9e11",
+      "name": "Ma Cà Rồng: Lestat de Lioncourt",
+      "slug": "ma-ca-rong-lestat-de-lioncourt",
+      "origin_name": "The Vampire Lestat (Interview with the Vampire Season 3)",
+      "alternative_names": [
+        "Anne Rice's The Vampire Lestat"
+      ],
+      "content": "<p>Bộ phim The Vampire Lestat là mùa phim tiếp theo trong loạt phim gốc ăn khách Interview with the Vampire (Phỏng Vấn Ma Cà Rồng). Sau khi các sự kiện trong hai mùa phim đầu tập trung vào Louis, mùa phim này sẽ thay đổi hoàn toàn góc nhìn để trở thành câu chuyện của chính Lestat de Lioncourt và tự \"đính chính\" những gì anh cho là bị bóp méo trước đó. Phần 3 là câu chuyện về việc Lestat trở thành ngôi sao nhạc rock bất tử, kể lại toàn bộ cuộc đời mình từ thời con người, đến lúc bị biến đổi thành ma cà rồng, chiến đấu với các giáo phái ma cà rồng khác và đến khi trở thành một trong những ma cà rồng quyền lực nhất thế giới.</p>",
+      "type": "series",
+      "status": "ongoing",
+      "thumb_url": "https://img.ophim.live/uploads/movies/ma-ca-rong-lestat-de-lioncourt-thumb.jpg",
+      "poster_url": "https://img.ophim.live/uploads/movies/ma-ca-rong-lestat-de-lioncourt-poster.jpg",
+      "is_copyright": false,
+      "sub_docquyen": true,
+      "chieurap": false,
+      "is_published": true,
+      "trailer_url": "https://www.youtube.com/watch?v=7c7JFMTBeVk",
+      "time": "50 phút/tập",
+      "episode_current": "Tập 4",
+      "episode_total": "7 Tập",
+      "quality": "HD",
+      "lang": "Vietsub",
+      "lang_key": [
+        "vs"
+      ],
+      "notify": "",
+      "showtimes": "",
+      "year": 2026,
+      "view": 0,
+      "actor": [
+        "Sam Reid",
+        "Jacob Anderson",
+        "Assad Zaman",
+        "Joseph Potter",
+        "Jennifer Ehle",
+        "Eric Bogosian"
+      ],
+      "director": [
+        ""
+      ],
+      "category": [
+        {
+          "id": "620a2282e0fc277084dfd435",
+          "name": "Viễn Tưởng",
+          "slug": "vien-tuong"
+        },
+        {
+          "id": "620a229be0fc277084dfd4dd",
+          "name": "Khoa Học",
+          "slug": "khoa-hoc"
+        },
+        {
+          "id": "620f3d2b91fa4af90ab697fe",
+          "name": "Chính kịch",
+          "slug": "chinh-kich"
+        }
+      ],
+      "country": [
+        {
+          "id": "620a231fe0fc277084dfd7ce",
+          "name": "Âu Mỹ",
+          "slug": "au-my"
+        }
+      ]
+    },
+    "episodes": [
+      {
+        "server_name": "Subteam #1",
+        "is_ai": false,
+        "server_data": [
+          {
+            "name": "1",
+            "slug": "1",
+            "filename": "Interview.with.the.Vampire.S03E01.Detroit.1080p.AMZN.WEB-DL.DD.5.1.H.264-playWEB",
+            "link_embed": "https://vip.opstream10.com/share/eebf8c4112978252010dbe58d06ad568",
+            "link_m3u8": "https://vip.opstream10.com/20260616/33924_eebf8c41/index.m3u8"
+          },
+          {
+            "name": "2",
+            "slug": "2",
+            "filename": "Interview With The Vampire S03E02 Toledo 1080p AMZN WEB-DL DDP5 1 H 264-RAWR[EZTVx.to]",
+            "link_embed": "https://vip.opstream10.com/share/5a088882ef21256521816f6ccab00c9b",
+            "link_m3u8": "https://vip.opstream10.com/20260618/33933_5a088882/index.m3u8"
+          },
+          {
+            "name": "3",
+            "slug": "3",
+            "filename": "Interview with the Vampire S03E03 Toronto REPACK 1080p AMZN WEB-DL DDP5 1 H 264-RAWR[EZTVx.to]",
+            "link_embed": "https://vip.opstream10.com/share/4a333cef27064666cb534d210b8d2c76",
+            "link_m3u8": "https://vip.opstream10.com/20260623/33943_4a333cef/index.m3u8"
+          },
+          {
+            "name": "4",
+            "slug": "4",
+            "filename": "Interview with the Vampire S03E04 The Devils Road 1080p AMZN WEB-DL DDP5 1 H 264-RAWR[EZTVx.to]",
+            "link_embed": "https://vip.opstream10.com/share/a854d36a4afe77df29f4c42eb35af078",
+            "link_m3u8": "https://vip.opstream10.com/20260701/33958_a854d36a/index.m3u8"
+          }
+        ]
+      }
+    ]
+  }
+}
