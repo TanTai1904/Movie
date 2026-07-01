@@ -1647,7 +1647,8 @@ input:focus, select:focus {
 
 @media (max-width: 1024px) {
   .app-layout {
-    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
   }
 
   .hamburger-menu {
@@ -1683,9 +1684,15 @@ input:focus, select:focus {
     display: none; /* Hide profile name texts to save space */
   }
 
+  .content-view {
+    padding: 20px;
+  }
+
   .detail-content-wrap {
+    display: flex;
     flex-direction: column;
     padding: 20px;
+    margin-top: -80px;
   }
 
   .detail-poster-sec {
@@ -1695,6 +1702,7 @@ input:focus, select:focus {
   }
 
   .watch-container {
+    display: flex;
     flex-direction: column;
     gap: 30px;
     padding: 20px;
@@ -1705,13 +1713,18 @@ input:focus, select:focus {
   }
 
   .hero-banner {
-    height: 480px;
+    height: 440px;
+  }
+
+  .movies-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
   }
 }
 
 @media (max-width: 768px) {
   .hero-title {
-    font-size: 32px;
+    font-size: 30px;
   }
 
   .hero-description {
@@ -1724,16 +1737,17 @@ input:focus, select:focus {
   }
 
   .header-search {
-    max-width: 220px;
+    max-width: 240px;
+    flex-grow: 1;
+  }
+
+  .content-view {
+    padding: 16px;
   }
 
   .movies-grid {
-    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-    gap: 16px;
-  }
-
-  .movie-card-thumb-wrap {
-    height: 195px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
   }
 
   .movie-card-title {
@@ -1741,7 +1755,8 @@ input:focus, select:focus {
   }
 
   .hero-banner {
-    height: 380px;
+    height: 360px;
+    padding: 30px 20px;
   }
 
   .hero-actions {
@@ -1754,6 +1769,69 @@ input:focus, select:focus {
   }
 
   .detail-backdrop {
-    height: 250px;
+    height: 220px;
+  }
+
+  .player-info-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px;
+  }
+  
+  .player-server-selector {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+@media (max-width: 480px) {
+  .top-header {
+    padding: 0 12px;
+    gap: 8px;
+  }
+
+  .hamburger-menu {
+    width: 38px;
+    height: 38px;
+    font-size: 20px;
+    margin-right: 8px;
+  }
+
+  .header-search {
+    max-width: 180px;
+    padding: 6px 12px;
+  }
+
+  .search-icon {
+    font-size: 16px;
+    margin-right: 6px;
+  }
+
+  .header-search input {
+    font-size: 13px;
+  }
+
+  .profile-avatar {
+    width: 36px;
+    height: 36px;
+    font-size: 18px;
+  }
+
+  .hero-title {
+    font-size: 24px;
+  }
+
+  .hero-banner {
+    height: 320px;
+  }
+
+  .content-view {
+    padding: 12px;
+  }
+  
+  .movies-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
   }
 }
