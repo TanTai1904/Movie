@@ -132,14 +132,20 @@ export default function HomeView({ watchlist, toggleWatchlist, onLogRequest, onL
       <div
         id="hero-banner"
         className="hero-banner"
-        style={{
-          backgroundImage: heroMovie
-            ? `url('${fixBackdropURL(heroMovie.poster_url || heroMovie.thumb_url, heroMovie.apiSource)}')`
-            : 'none'
-        }}
       >
-        <div className="hero-overlay"></div>
-        <div className="hero-content">
+        {heroMovie && (
+          <img 
+            src={fixBackdropURL(heroMovie.poster_url || heroMovie.thumb_url, heroMovie.apiSource)} 
+            alt="" 
+            style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover', zIndex: 0 }}
+            referrerPolicy="no-referrer"
+            onError={(e) => {
+              e.target.style.display = 'none';
+            }}
+          />
+        )}
+        <div className="hero-overlay" style={{ zIndex: 1 }}></div>
+        <div className="hero-content" style={{ zIndex: 2 }}>
           <span className="hero-badge">NỔI BẬT</span>
           {loadingHero ? (
             <>

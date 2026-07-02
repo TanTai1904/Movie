@@ -13,16 +13,25 @@ export function fixImageURL(url, apiSource) {
   if (url.startsWith('http://') || url.startsWith('https://')) {
     return url;
   }
+  
+  const cleanUrl = url.startsWith('/') ? url.substring(1) : url;
+
   if (apiSource === 'ophim') {
-    return `https://img.ophim.live/uploads/movies/${url}`;
+    if (cleanUrl.startsWith('uploads/movies/')) {
+      return `https://img.ophim.live/${cleanUrl}`;
+    }
+    return `https://img.ophim.live/uploads/movies/${cleanUrl}`;
   }
   if (apiSource === 'phimapi') {
-    return `https://phimimg.com/upload/vod/${url}`;
+    if (cleanUrl.startsWith('upload/vod/')) {
+      return `https://phimimg.com/${cleanUrl}`;
+    }
+    return `https://phimimg.com/upload/vod/${cleanUrl}`;
   }
   if (apiSource === 'nguonc') {
-    return `https://phim.nguonc.com${url.startsWith('/') ? '' : '/'}${url}`;
+    return `https://phim.nguonc.com/${cleanUrl}`;
   }
-  return `https://phimimg.com/upload/vod/${url}`;
+  return `https://phimimg.com/upload/vod/${cleanUrl}`;
 }
 
 export function fixBackdropURL(url, apiSource) {
@@ -30,16 +39,25 @@ export function fixBackdropURL(url, apiSource) {
   if (url.startsWith('http://') || url.startsWith('https://')) {
     return url;
   }
+  
+  const cleanUrl = url.startsWith('/') ? url.substring(1) : url;
+
   if (apiSource === 'ophim') {
-    return `https://img.ophim.live/uploads/movies/${url}`;
+    if (cleanUrl.startsWith('uploads/movies/')) {
+      return `https://img.ophim.live/${cleanUrl}`;
+    }
+    return `https://img.ophim.live/uploads/movies/${cleanUrl}`;
   }
   if (apiSource === 'phimapi') {
-    return `https://phimimg.com/upload/vod/${url}`;
+    if (cleanUrl.startsWith('upload/vod/')) {
+      return `https://phimimg.com/${cleanUrl}`;
+    }
+    return `https://phimimg.com/upload/vod/${cleanUrl}`;
   }
   if (apiSource === 'nguonc') {
-    return `https://phim.nguonc.com${url.startsWith('/') ? '' : '/'}${url}`;
+    return `https://phim.nguonc.com/${cleanUrl}`;
   }
-  return `https://phimimg.com/upload/vod/${url}`;
+  return `https://phimimg.com/upload/vod/${cleanUrl}`;
 }
 
 export function normalizeMovieItem(item, source) {

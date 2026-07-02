@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import Hls from 'hls.js';
 import { fetchUnifiedDetail, fetchUnifiedNewMovies, fixImageURL } from '../utils.js';
 
-export default function WatchView({ slug, episodeSlug, history, saveWatchHistory, onLogRequest, onLogResponse }) {
+export default function WatchView({ slug, episodeSlug, history, saveWatchHistory, globalDownloads = {}, startGlobalDownload, cancelGlobalDownload, onLogRequest, onLogResponse }) {
   const [movie, setMovie] = useState(null);
   const [episodes, setEpisodes] = useState([]);
   const [episode, setEpisode] = useState(null);
@@ -353,6 +353,77 @@ export default function WatchView({ slug, episodeSlug, history, saveWatchHistory
               ))}
             </div>
           </div>
+
+          {/* Download Current Episode Section */}
+          {episode && episode.link_m3u8 && (
+            <div className="watch-episodes-card" style={{ marginTop: '20px' }}>
+              <div className="card-header">
+                <h3 style={{ color: 'var(--accent-color)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <i className="bx bx-cloud-download"></i> Tải Tập Này (.MP4)
+                </h3>
+              </div>
+              <div style={{ padding: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: 'var(--bg-secondary)', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                <div>
+                  <span style={{ fontSize: '13px', fontWeight: 'bold' }}>Tập đang phát: {movie?.name} - Tập {episode.name}</span>
+                  <p style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '4px', lineHeight: '1.4' }}>Tiến trình tải sẽ chạy ngầm toàn cục. Bạn có thể nhấn tải rồi thoải mái tắt trang xem phim để lướt xem phim khác!</p>
+                </div>
+                <div>
+                  {(() => {
+                    const downloadId = episode.link_m3u8;
+                    const currentDownload = globalDownloads[downloadId];
+                    const isDownloading = currentDownload && ['parsing', 'downloading', 'merging', 'saving'].includes(currentDownload.status);
+
+                    if (isDownloading) {
+                      return (
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <span style={{ fontSize: '11px', color: 'var(--accent-color)', fontWeight: 'bold' }}>{currentDownload.percent}%</span>
+                          <button 
+                            className="btn" 
+                            style={{ padding: '2px 8px', fontSize: '11px', height: '24px', backgroundColor: 'var(--bg-active)', border: '1px solid var(--border-color)', color: '#fff' }}
+                            onClick={() => cancelGlobalDownload(downloadId)}
+                          >
+                            Hủy
+                          </button>
+                        </div>
+                      );
+                    } else if (currentDownload?.status === 'completed') {
+                      return (
+                        <span style={{ fontSize: '11px', color: 'var(--color-success)', fontWeight: 'bold' }}>
+                          <i className="bx bx-check-circle"></i> Đã tải xong
+                        </span>
+                      );
+                    } else {
+                      return (
+                        <button 
+                          className="btn btn-primary" 
+                          style={{ 
+                            padding: '10px 28px', 
+                            fontSize: '14px', 
+                            height: 'auto', 
+                            backgroundColor: '#27ae60', 
+                            borderColor: '#27ae60', 
+                            color: '#fff', 
+                            fontWeight: '800', 
+                            boxShadow: '0 4px 12px rgba(39, 174, 96, 0.4)',
+                            letterSpacing: '0.5px'
+                          }}
+                          onClick={() => startGlobalDownload(
+                            episode.link_m3u8,
+                            movie.name,
+                            episode.name,
+                            `${movie.name}-Tap-${episode.name}.mp4`
+                          )}
+                        >
+                          <i className="bx bx-cloud-download" style={{ marginRight: '6px', fontSize: '16px' }}></i> TẢI XUỐNG TẬP NÀY (.MP4)
+                        </button>
+                      );
+                    }
+                  })()}
+                </div>
+              </div>
+            </div>
+          )}
+
         </div>
 
         {/* Watch Sidebar (Related/Popular Movies) */}
@@ -373,6 +444,7 @@ export default function WatchView({ slug, episodeSlug, history, saveWatchHistory
                       className="sidebar-movie-thumb"
                       src={fixImageURL(rec.poster_url || rec.thumb_url, rec.apiSource)}
                       alt={rec.name}
+                      referrerPolicy="no-referrer"
                       onError={(e) => {
                         e.target.src = '/default-poster.png';
                       }}

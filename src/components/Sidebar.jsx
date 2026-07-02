@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function Sidebar({ activeNav, watchlistCount, isSidebarOpen, setIsSidebarOpen }) {
+export default function Sidebar({ activeNav, watchlistCount, isSidebarOpen, setIsSidebarOpen, activeDownloadsCount = 0 }) {
   const menuItems = [
     { id: 'home', hash: '#home', icon: 'bx-home-alt-2', label: 'Trang Chủ' },
     { id: 'phim-le', hash: '#phim-le', icon: 'bx-movie-play', label: 'Phim Lẻ' },
@@ -53,7 +53,21 @@ export default function Sidebar({ activeNav, watchlistCount, isSidebarOpen, setI
           onClick={() => setIsSidebarOpen(false)}
         >
           <i className="bx bx-history"></i>
-          <span>Lịch Sử</span>
+          <span>Lịch Sử Xem</span>
+        </a>
+        <a
+          href="#lich-su-tai"
+          className={`nav-link ${activeNav === 'lich-su-tai' ? 'active' : ''}`}
+          data-nav="lich-su-tai"
+          onClick={() => setIsSidebarOpen(false)}
+        >
+          <i className="bx bx-cloud-download"></i>
+          <span>Lịch Sử Tải</span>
+          {activeDownloadsCount > 0 && (
+            <span className="badge badge-downloads">
+              {activeDownloadsCount}
+            </span>
+          )}
         </a>
       </nav>
     </aside>

@@ -16,6 +16,7 @@ export default function MovieCard({ movie }) {
           src={coverUrl}
           alt={movie.name}
           loading="lazy"
+          referrerPolicy="no-referrer"
           onError={(e) => {
             e.target.src = '/default-poster.png';
           }}

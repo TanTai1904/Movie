@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { fetchUnifiedDetail, fixImageURL, fixBackdropURL } from '../utils.js';
 
-export default function DetailView({ slug, watchlist, toggleWatchlist, onLogRequest, onLogResponse }) {
+export default function DetailView({ slug, watchlist, toggleWatchlist, globalDownloads = {}, startGlobalDownload, cancelGlobalDownload, onLogRequest, onLogResponse }) {
   const [movie, setMovie] = useState(null);
   const [episodes, setEpisodes] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -103,12 +103,20 @@ export default function DetailView({ slug, watchlist, toggleWatchlist, onLogRequ
         <div
           id="detail-backdrop"
           className="detail-backdrop"
-          style={{
-            backgroundImage: `url('${fixBackdropURL(movie.poster_url || movie.thumb_url, movie.apiSource)}')`
-          }}
         >
-          <div className="backdrop-gradient"></div>
-          <button className="btn-back-home" onClick={() => window.location.hash = '#home'}>
+          {movie && (
+            <img
+              src={fixBackdropURL(movie.poster_url || movie.thumb_url, movie.apiSource)}
+              alt=""
+              style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover', zIndex: 0 }}
+              referrerPolicy="no-referrer"
+              onError={(e) => {
+                e.target.style.display = 'none';
+              }}
+            />
+          )}
+          <div className="backdrop-gradient" style={{ zIndex: 1 }}></div>
+          <button className="btn-back-home" style={{ zIndex: 2 }} onClick={() => window.location.hash = '#home'}>
             <i className="bx bx-left-arrow-alt"></i> Quay Lại
           </button>
         </div>
@@ -118,6 +126,7 @@ export default function DetailView({ slug, watchlist, toggleWatchlist, onLogRequ
               id="detail-poster"
               src={fixImageURL(movie.thumb_url || movie.poster_url, movie.apiSource)}
               alt={movie.name}
+              referrerPolicy="no-referrer"
               onError={(e) => {
                 e.target.src = '/default-poster.png';
               }}
@@ -132,6 +141,24 @@ export default function DetailView({ slug, watchlist, toggleWatchlist, onLogRequ
             >
               <i className={`bx ${isFav ? 'bxs-heart text-danger' : 'bx-heart'}`}></i>{' '}
               {isFav ? 'Đã Yêu Thích' : 'Thêm Yêu Thích'}
+            </button>
+            <button
+              className="btn btn-success w-100 mt-2"
+              style={{ 
+                backgroundColor: '#27ae60', 
+                borderColor: '#27ae60', 
+                color: '#fff', 
+                fontSize: '14px', 
+                fontWeight: 'bold', 
+                padding: '10px 16px', 
+                height: 'auto',
+                boxShadow: '0 4px 12px rgba(39, 174, 96, 0.3)' 
+              }}
+              onClick={() => {
+                document.getElementById('download-section-anchor')?.scrollIntoView({ behavior: 'smooth' });
+              }}
+            >
+              <i className="bx bx-cloud-download" style={{ fontSize: '16px', marginRight: '4px' }}></i> TẢI PHIM VỀ MÁY
             </button>
           </div>
           <div className="detail-info-sec">
@@ -215,6 +242,87 @@ export default function DetailView({ slug, watchlist, toggleWatchlist, onLogRequ
                       {ep.name}
                     </button>
                   ))}
+                </div>
+              </div>
+            )}
+
+            {/* Download Section (MP4 Background Downloader) */}
+            {episodes.length > 0 && episodes[0].server_data.length > 0 && (
+              <div id="download-section-anchor" className="detail-episodes-section mt-4 pt-4" style={{ borderTop: '1px solid rgba(255,255,255,0.08)' }}>
+                <h4 style={{ color: 'var(--accent-color)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <i className="bx bx-cloud-download"></i> Tải Phim Về Máy (.MP4)
+                </h4>
+                <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '14px', lineHeight: '1.4' }}>
+                  Tải phim tốc độ cao trực tiếp về thiết bị dưới dạng tệp MP4. Bạn có thể nhấn tải rồi thoải mái chuyển sang xem phim khác hoặc tìm kiếm, tiến trình tải sẽ chạy ngầm và không bị ảnh hưởng.
+                </p>
+                <div className="server-tabs">
+                  {episodes.map((server, idx) => (
+                    <button
+                      key={idx}
+                      className={`server-tab-btn ${idx === activeServerIdx ? 'active' : ''}`}
+                      onClick={() => setActiveServerIdx(idx)}
+                    >
+                      {server.server_name}
+                    </button>
+                  ))}
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '14px' }}>
+                  {episodes[activeServerIdx]?.server_data.map(ep => {
+                    const downloadId = ep.link_m3u8;
+                    const currentDownload = globalDownloads[downloadId];
+                    const isDownloading = currentDownload && ['parsing', 'downloading', 'merging', 'saving'].includes(currentDownload.status);
+
+                    return (
+                      <div key={ep.slug} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 14px', backgroundColor: 'var(--bg-secondary)', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                        <span style={{ fontSize: '13px', fontWeight: '600' }}>Tập {ep.name}</span>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                          {isDownloading ? (
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                              <div style={{ width: '80px', height: '4px', backgroundColor: 'rgba(255,255,255,0.1)', borderRadius: '2px', overflow: 'hidden' }}>
+                                <div style={{ width: `${currentDownload.percent}%`, height: '100%', backgroundColor: 'var(--accent-color)' }}></div>
+                              </div>
+                              <span style={{ fontSize: '11px', color: 'var(--accent-color)', fontWeight: 'bold' }}>{currentDownload.percent}%</span>
+                              <button 
+                                className="btn" 
+                                style={{ padding: '2px 8px', fontSize: '11px', height: '24px', backgroundColor: 'var(--bg-active)', border: '1px solid var(--border-color)', color: '#fff' }}
+                                onClick={() => cancelGlobalDownload(downloadId)}
+                              >
+                                Hủy
+                              </button>
+                            </div>
+                          ) : currentDownload?.status === 'completed' ? (
+                            <span style={{ fontSize: '11px', color: 'var(--color-success)', fontWeight: 'bold' }}>
+                              <i className="bx bx-check-circle"></i> Đã tải xong
+                            </span>
+                          ) : (
+                            <button 
+                              className="btn btn-success" 
+                              style={{ 
+                                padding: '10px 28px', 
+                                fontSize: '14px', 
+                                height: 'auto', 
+                                backgroundColor: '#27ae60', 
+                                borderColor: '#27ae60', 
+                                color: '#fff', 
+                                fontWeight: '800',
+                                boxShadow: '0 4px 12px rgba(39, 174, 96, 0.4)',
+                                letterSpacing: '0.5px'
+                              }}
+                              onClick={() => startGlobalDownload(
+                                ep.link_m3u8,
+                                movie.name,
+                                ep.name,
+                                `${movie.name}-Tap-${ep.name}.mp4`
+                              )}
+                              disabled={!ep.link_m3u8}
+                            >
+                              <i className="bx bx-cloud-download" style={{ marginRight: '6px', fontSize: '16px' }}></i> Tải MP4
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             )}

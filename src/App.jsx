@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Sidebar from './components/Sidebar.jsx';
 import Header from './components/Header.jsx';
 import HomeView from './components/HomeView.jsx';
@@ -7,6 +7,8 @@ import WatchView from './components/WatchView.jsx';
 import FilterView from './components/FilterView.jsx';
 import FavoritesView from './components/FavoritesView.jsx';
 import HistoryView from './components/HistoryView.jsx';
+import DownloadsView from './components/DownloadsView.jsx';
+import { downloadHlsAsMp4 } from './downloader.js';
 
 export default function App() {
   const [watchlist, setWatchlist] = useState(() => {
@@ -28,13 +30,142 @@ export default function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [route, setRoute] = useState(() => window.location.hash || '#home');
 
+  // Background downloader state
+  const [globalDownloads, setGlobalDownloads] = useState({});
+  const [downloadsHistory, setDownloadsHistory] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem('sofaflix_downloads_history')) || [];
+    } catch {
+      return [];
+    }
+  });
+  const abortControllersRef = useRef({});
+
+  // Sync download history to localStorage
+  useEffect(() => {
+    localStorage.setItem('sofaflix_downloads_history', JSON.stringify(downloadsHistory));
+  }, [downloadsHistory]);
+
+  // Cancel abort controllers on unmount
+  useEffect(() => {
+    return () => {
+      Object.values(abortControllersRef.current).forEach(c => c.abort());
+    };
+  }, []);
+
+  const clearDownloadsHistory = () => {
+    setDownloadsHistory([]);
+  };
+
+  const deleteDownloadHistoryItem = (id) => {
+    setDownloadsHistory(prev => prev.filter(item => item.id !== id));
+  };
+
+  const startGlobalDownload = (m3u8Url, movieName, episodeName, fileName) => {
+    if (!m3u8Url) return;
+
+    const existing = globalDownloads[m3u8Url];
+    if (existing && ['parsing', 'downloading', 'merging', 'saving'].includes(existing.status)) {
+      alert('Tập phim này đang được tải xuống!');
+      return;
+    }
+
+    const controller = new AbortController();
+    abortControllersRef.current[m3u8Url] = controller;
+
+    setGlobalDownloads(prev => ({
+      ...prev,
+      [m3u8Url]: {
+        id: m3u8Url,
+        movieName,
+        episodeName,
+        fileName,
+        percent: 0,
+        downloadedSegments: 0,
+        totalSegments: 0,
+        downloadedMb: 0,
+        status: 'parsing',
+        statusMessage: 'Đang chuẩn bị kết nối...'
+      }
+    }));
+
+    downloadHlsAsMp4(
+      m3u8Url,
+      fileName,
+      // onProgress callback
+      (percent, current, total, mb) => {
+        setGlobalDownloads(prev => {
+          if (!prev[m3u8Url]) return prev;
+          return {
+            ...prev,
+            [m3u8Url]: {
+              ...prev[m3u8Url],
+              percent,
+              downloadedSegments: current,
+              totalSegments: total,
+              downloadedMb: mb
+            }
+          };
+        });
+      },
+      // onStatusChange callback
+      (status, message) => {
+        setGlobalDownloads(prev => {
+          if (!prev[m3u8Url]) return prev;
+          const updated = {
+            ...prev[m3u8Url],
+            status,
+            statusMessage: message
+          };
+
+          // Save to downloadsHistory when download reaches terminal state
+          if (status === 'completed' || status === 'error' || status === 'cancelled') {
+            setDownloadsHistory(historyPrev => {
+              const filtered = historyPrev.filter(h => h.id !== m3u8Url);
+              return [
+                {
+                  id: m3u8Url,
+                  movieName: updated.movieName,
+                  episodeName: updated.episodeName,
+                  fileName: updated.fileName,
+                  percent: updated.percent,
+                  downloadedMb: updated.downloadedMb,
+                  status,
+                  statusMessage: message,
+                  timestamp: new Date().toLocaleString('vi-VN')
+                },
+                ...filtered
+              ];
+            });
+          }
+
+          return {
+            ...prev,
+            [m3u8Url]: updated
+          };
+        });
+
+        if (status === 'completed' || status === 'error' || status === 'cancelled') {
+          delete abortControllersRef.current[m3u8Url];
+        }
+      },
+      controller.signal
+    );
+  };
+
+  const cancelGlobalDownload = (m3u8Url) => {
+    const controller = abortControllersRef.current[m3u8Url];
+    if (controller) {
+      controller.abort();
+      delete abortControllersRef.current[m3u8Url];
+    }
+  };
+
   useEffect(() => {
     const handleHashChange = () => {
       setRoute(window.location.hash || '#home');
-      // Scroll main content to top on view change
       const mainContent = document.querySelector('.main-content');
       if (mainContent) mainContent.scrollTop = 0;
-      // Auto-close sidebar on mobile hash change
       setIsSidebarOpen(false);
     };
     window.addEventListener('hashchange', handleHashChange);
@@ -108,6 +239,9 @@ export default function App() {
           slug={slug}
           watchlist={watchlist}
           toggleWatchlist={toggleWatchlist}
+          globalDownloads={globalDownloads}
+          startGlobalDownload={startGlobalDownload}
+          cancelGlobalDownload={cancelGlobalDownload}
         />
       );
     }
@@ -121,6 +255,9 @@ export default function App() {
           episodeSlug={episodeSlug}
           history={history}
           saveWatchHistory={saveWatchHistory}
+          globalDownloads={globalDownloads}
+          startGlobalDownload={startGlobalDownload}
+          cancelGlobalDownload={cancelGlobalDownload}
         />
       );
     }
@@ -134,9 +271,8 @@ export default function App() {
       );
     }
 
-    // Determine normalized current route
     let activeRoute = route;
-    if (!['#home', '#phim-le', '#phim-bo', '#hoat-hinh', '#phim-chieu-rap', '#tv-shows', '#danh-muc', '#favorites', '#history'].includes(route)) {
+    if (!['#home', '#phim-le', '#phim-bo', '#hoat-hinh', '#phim-chieu-rap', '#tv-shows', '#danh-muc', '#favorites', '#history', '#lich-su-tai'].includes(route)) {
       activeRoute = '#home';
     }
 
@@ -203,6 +339,17 @@ export default function App() {
             deleteHistoryItem={deleteHistoryItem}
           />
         );
+      case '#lich-su-tai':
+        return (
+          <DownloadsView
+            globalDownloads={globalDownloads}
+            downloadsHistory={downloadsHistory}
+            cancelGlobalDownload={cancelGlobalDownload}
+            startGlobalDownload={startGlobalDownload}
+            clearDownloadsHistory={clearDownloadsHistory}
+            deleteDownloadHistoryItem={deleteDownloadHistoryItem}
+          />
+        );
       default:
         return (
           <HomeView
@@ -213,45 +360,39 @@ export default function App() {
     }
   };
 
-  // Determine active view label for Sidebar highlighting
   let activeNav = 'home';
   if (route.startsWith('#movie/') || route.startsWith('#watch/')) {
-    activeNav = ''; // No active nav in sidebar for details or watch view
+    activeNav = '';
   } else if (route.startsWith('#search?q=')) {
-    activeNav = 'danh-muc'; // Search results fit inside filter page layout
+    activeNav = 'danh-muc';
   } else {
     activeNav = route.substring(1) || 'home';
   }
 
   return (
     <div className="app-layout">
-      {/* Sidebar Navigation */}
       <Sidebar
         activeNav={activeNav}
         watchlistCount={watchlist.length}
         isSidebarOpen={isSidebarOpen}
         setIsSidebarOpen={setIsSidebarOpen}
+        activeDownloadsCount={Object.values(globalDownloads).filter(d => ['parsing', 'downloading', 'merging', 'saving'].includes(d.status)).length}
       />
 
-      {/* Mobile Sidebar overlay */}
       {isSidebarOpen && (
-        <div 
-          className="sidebar-overlay" 
+        <div
+          className="sidebar-overlay"
           onClick={() => setIsSidebarOpen(false)}
         ></div>
       )}
 
-      {/* Main Content Area */}
       <main className="main-content">
-        {/* Top Header */}
         <Header
           onToggleSidebar={() => setIsSidebarOpen(prev => !prev)}
         />
 
-        {/* View Content */}
         {renderView()}
 
-        {/* Footer */}
         <footer className="main-footer">
           <p>&copy; 2026 Studyflix Hub. Được thiết kế tối ưu và đồng bộ đa nguồn dữ liệu giải trí học tập.</p>
           <p className="disclaimer">Tuyên bố miễn trừ trách nhiệm: Nội dung truyền thông được lấy từ các API bên thứ ba phục vụ cho nhu cầu học tập và nghiên cứu phi thương mại.</p>
