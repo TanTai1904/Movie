@@ -538,8 +538,19 @@ async function fetchFromTMDB(urlPath) {
   for (const key of TMDB_API_KEYS) {
     try {
       const separator = urlPath.includes('?') ? '&' : '?';
-      const url = `https://api.themoviedb.org/3/${urlPath}${separator}api_key=${key}&language=vi-VN`;
-      const res = await fetch(url);
+      const targetUrl = `https://api.themoviedb.org/3/${urlPath}${separator}api_key=${key}&language=vi-VN`;
+      
+      let res;
+      try {
+        res = await fetch(targetUrl);
+        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+      } catch (directErr) {
+        console.warn(`Direct TMDB fetch failed for path ${urlPath}, trying CORS proxy...`, directErr);
+        // Fallback to CORS proxy
+        const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`;
+        res = await fetch(proxyUrl);
+      }
+      
       if (res.ok) {
         return await res.json();
       }

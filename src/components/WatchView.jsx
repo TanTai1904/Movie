@@ -14,6 +14,7 @@ export default function WatchView({ slug, episodeSlug, history, saveWatchHistory
 
   const [playMode, setPlayMode] = useState('hls'); // 'hls' or 'embed'
   const [relatedMovies, setRelatedMovies] = useState([]);
+  const [playerNotification, setPlayerNotification] = useState('');
 
   const videoRef = useRef(null);
   const hlsRef = useRef(null);
@@ -111,9 +112,12 @@ export default function WatchView({ slug, episodeSlug, history, saveWatchHistory
     const startOffset = savedHistory ? savedHistory.currentTime : 0;
 
     let hlsInstance;
+    let networkErrorCount = 0;
+    let fallbackTimeout = null;
 
     const handleLoadedData = () => {
       setVideoLoading(false);
+      if (fallbackTimeout) clearTimeout(fallbackTimeout);
     };
 
     video.addEventListener('loadeddata', handleLoadedData);
@@ -135,19 +139,52 @@ export default function WatchView({ slug, episodeSlug, history, saveWatchHistory
         video.play().catch(() => console.log('Autoplay blocked'));
       });
 
+      // 7-second loading fallback to embed mode if embed link is available
+      if (episode.link_embed) {
+        fallbackTimeout = setTimeout(() => {
+          if (videoLoading && playMode === 'hls' && hlsInstance) {
+            console.warn('HLS stream loading timed out, falling back to embed mode...');
+            hlsInstance.destroy();
+            setPlayMode('embed');
+            setPlayerNotification('Tự động chuyển sang Server Nhúng do luồng HLS tải quá lâu/lỗi!');
+            setVideoLoading(false);
+          }
+        }, 7000);
+      }
+
       hlsInstance.on(Hls.Events.ERROR, (event, data) => {
         if (data.fatal) {
           switch (data.type) {
             case Hls.ErrorTypes.NETWORK_ERROR:
-              console.log('HLS Network error - retrying...');
-              hlsInstance.startLoad();
+              networkErrorCount++;
+              console.log(`HLS Network error (${networkErrorCount}) - retrying...`);
+              if (networkErrorCount > 3) {
+                console.warn('Too many HLS network errors, switching to embed...');
+                hlsInstance.destroy();
+                if (episode.link_embed) {
+                  setPlayMode('embed');
+                  setPlayerNotification('Tự động chuyển sang Server Nhúng do lỗi kết nối luồng phát HLS!');
+                } else {
+                  setError('Luồng video HLS gặp lỗi mạng liên tục và không có server dự phòng.');
+                }
+                setVideoLoading(false);
+              } else {
+                hlsInstance.startLoad();
+              }
               break;
             case Hls.ErrorTypes.MEDIA_ERROR:
               console.log('HLS Media error - recovering...');
               hlsInstance.recoverMediaError();
               break;
             default:
-              console.error('Fatal HLS error, stopping.');
+              console.error('Fatal HLS error, switching to embed...');
+              hlsInstance.destroy();
+              if (episode.link_embed) {
+                setPlayMode('embed');
+                setPlayerNotification('Tự động chuyển sang Server Nhúng do trình phát HLS gặp sự cố!');
+              } else {
+                setError('Không thể phát video bằng HLS và không có server dự phòng.');
+              }
               setVideoLoading(false);
               break;
           }
@@ -161,6 +198,7 @@ export default function WatchView({ slug, episodeSlug, history, saveWatchHistory
           video.currentTime = startOffset;
         }
         video.play().catch(() => console.log('Autoplay blocked'));
+        setVideoLoading(false);
       };
       video.addEventListener('loadedmetadata', onLoadedMetadata);
       return () => {
@@ -169,7 +207,12 @@ export default function WatchView({ slug, episodeSlug, history, saveWatchHistory
       };
     } else {
       setVideoLoading(false);
-      alert('Trình duyệt của bạn không hỗ trợ phát HLS (.m3u8). Vui lòng chuyển sang Server Nhúng!');
+      if (episode.link_embed) {
+        setPlayMode('embed');
+        setPlayerNotification('Trình duyệt không hỗ trợ m3u8, tự động chuyển sang Server Nhúng!');
+      } else {
+        alert('Trình duyệt của bạn không hỗ trợ phát HLS (.m3u8). Vui lòng chuyển sang Server Nhúng!');
+      }
     }
 
     return () => {
@@ -177,12 +220,18 @@ export default function WatchView({ slug, episodeSlug, history, saveWatchHistory
         hlsInstance.destroy();
         hlsRef.current = null;
       }
+      if (fallbackTimeout) clearTimeout(fallbackTimeout);
       video.removeEventListener('loadeddata', handleLoadedData);
       video.pause();
       video.removeAttribute('src');
       video.load();
     };
   }, [episode, playMode, loading, error, slug]);
+
+  // Reset notification on episode changes
+  useEffect(() => {
+    setPlayerNotification('');
+  }, [episode]);
 
   // 4. Listen to time update to save history progress
   useEffect(() => {
@@ -295,6 +344,31 @@ export default function WatchView({ slug, episodeSlug, history, saveWatchHistory
                 </div>
               )}
             </div>
+
+            {playerNotification && (
+              <div className="player-notification animate-slide-down" style={{
+                backgroundColor: 'rgba(230, 126, 34, 0.15)',
+                border: '1px solid #e67e22',
+                color: '#f39c12',
+                padding: '10px 16px',
+                borderRadius: '6px',
+                fontSize: '12.5px',
+                fontWeight: '600',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                margin: '12px 0 12px 0'
+              }}>
+                <i className="bx bx-info-circle" style={{ fontSize: '18px' }}></i>
+                <span>{playerNotification}</span>
+                <button 
+                  onClick={() => setPlayerNotification('')} 
+                  style={{ marginLeft: 'auto', color: 'inherit', cursor: 'pointer', fontSize: '16px', fontWeight: 'bold', border: 'none', background: 'none' }}
+                >
+                  &times;
+                </button>
+              </div>
+            )}
 
             {/* Player Controls & Info Bar */}
             <div className="player-info-bar">
