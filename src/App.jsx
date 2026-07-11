@@ -161,14 +161,108 @@ export default function App() {
     }
   };
 
+  // Background watchlist sync
+  useEffect(() => {
+    if (watchlist.length === 0) return;
+
+    let isMounted = true;
+    
+    async function syncWatchlist() {
+      let updatedList = [...watchlist];
+      let hasChanges = false;
+
+      // Import fetchUnifiedDetail dynamically to avoid blocking main bundle load
+      const { fetchUnifiedDetail } = await import('./utils.js');
+
+      // Check each item with a delay (throttle) of 800ms to avoid overwhelming APIs
+      for (let i = 0; i < watchlist.length; i++) {
+        if (!isMounted) break;
+        const item = watchlist[i];
+
+        try {
+          const detail = await fetchUnifiedDetail(item.slug);
+          if (detail && detail.movie) {
+            const latestEpisode = detail.movie.episode_current || '';
+            const latestModified = typeof detail.movie.modified === 'object' 
+              ? (detail.movie.modified?.time || '') 
+              : (detail.movie.modified || '');
+
+            const savedEpisode = item.episode_current || '';
+            const savedModified = typeof item.modified === 'object' 
+              ? (item.modified?.time || '') 
+              : (item.modified || '');
+
+            const isEpisodeChanged = latestEpisode && latestEpisode !== savedEpisode;
+            const isModifiedChanged = latestModified && latestModified !== savedModified;
+
+            if (isEpisodeChanged || isModifiedChanged) {
+              // Only trigger a new update badge if we already had a saved episode (i.e. not first time adding)
+              const triggerBadge = savedEpisode !== '';
+
+              updatedList[i] = {
+                ...item,
+                episode_current: latestEpisode,
+                modified: latestModified,
+                isNewUpdate: item.isNewUpdate || triggerBadge,
+                poster_url: detail.movie.poster_url || item.poster_url,
+                thumb_url: detail.movie.thumb_url || item.thumb_url
+              };
+              hasChanges = true;
+            }
+          }
+        } catch (err) {
+          console.warn(`Watchlist background sync failed for slug ${item.slug}:`, err);
+        }
+
+        // Delay between calls to respect rate limits
+        await new Promise(resolve => setTimeout(resolve, 800));
+      }
+
+      if (isMounted && hasChanges) {
+        setWatchlist(updatedList);
+        localStorage.setItem('sofaflix_watchlist', JSON.stringify(updatedList));
+      }
+    }
+
+    // Delay start of sync for 5 seconds after load so page loads smoothly first
+    const timer = setTimeout(() => {
+      syncWatchlist();
+    }, 5000);
+
+    return () => {
+      isMounted = false;
+      clearTimeout(timer);
+    };
+  }, []);
+
   useEffect(() => {
     const handleHashChange = () => {
-      setRoute(window.location.hash || '#home');
+      const hash = window.location.hash || '#home';
+      setRoute(hash);
       const mainContent = document.querySelector('.main-content');
       if (mainContent) mainContent.scrollTop = 0;
       setIsSidebarOpen(false);
+
+      // Clear watchlist update flag when viewing the movie details or watch view
+      if (hash.startsWith('#movie/') || hash.startsWith('#watch/')) {
+        const slug = hash.split('/')[1];
+        if (slug) {
+          setWatchlist(prev => {
+            const idx = prev.findIndex(m => m.slug === slug);
+            if (idx > -1 && prev[idx].isNewUpdate) {
+              const updated = [...prev];
+              updated[idx] = { ...updated[idx], isNewUpdate: false };
+              localStorage.setItem('sofaflix_watchlist', JSON.stringify(updated));
+              return updated;
+            }
+            return prev;
+          });
+        }
+      }
     };
     window.addEventListener('hashchange', handleHashChange);
+    // Run once on mount to handle initial load
+    handleHashChange();
     return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
 
@@ -185,7 +279,10 @@ export default function App() {
         poster_url: movie.poster_url,
         thumb_url: movie.thumb_url,
         year: movie.year,
-        apiSource: movie.apiSource
+        episode_current: movie.episode_current || '',
+        modified: movie.modified || '',
+        apiSource: movie.apiSource,
+        isNewUpdate: false
       });
     }
     setWatchlist(updatedList);

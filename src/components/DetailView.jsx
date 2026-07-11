@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { fetchUnifiedDetail, fixImageURL, fixBackdropURL } from '../utils.js';
+import { fetchUnifiedDetail, fixImageURL, fixBackdropURL, getHighQualityBanner, getHighQualityPoster } from '../utils.js';
 
 export default function DetailView({ slug, watchlist, toggleWatchlist, globalDownloads = {}, startGlobalDownload, cancelGlobalDownload, onLogRequest, onLogResponse }) {
   const [movie, setMovie] = useState(null);
@@ -7,6 +7,30 @@ export default function DetailView({ slug, watchlist, toggleWatchlist, globalDow
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [activeServerIdx, setActiveServerIdx] = useState(0);
+
+  const [backdropUrl, setBackdropUrl] = useState('/default-banner.png');
+  const [posterUrl, setPosterUrl] = useState('/default-poster.png');
+
+  // Dynamic high-quality image loader
+  useEffect(() => {
+    if (!movie) return;
+    let isMounted = true;
+
+    // Fast preview with corrected layouts (swapped bug fixed!)
+    setBackdropUrl(fixBackdropURL(movie.thumb_url || movie.poster_url, movie.apiSource));
+    setPosterUrl(fixImageURL(movie.poster_url || movie.thumb_url, movie.apiSource));
+
+    // Fetch high quality versions in the background
+    getHighQualityBanner(movie).then(url => {
+      if (isMounted && url) setBackdropUrl(url);
+    });
+
+    getHighQualityPoster(movie).then(url => {
+      if (isMounted && url) setPosterUrl(url);
+    });
+
+    return () => { isMounted = false; };
+  }, [movie]);
 
   useEffect(() => {
     async function loadMovieDetail() {
@@ -106,8 +130,9 @@ export default function DetailView({ slug, watchlist, toggleWatchlist, globalDow
         >
           {movie && (
             <img
-              src={fixBackdropURL(movie.poster_url || movie.thumb_url, movie.apiSource)}
+              src={backdropUrl}
               alt=""
+              className="image-fade-in"
               style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover', zIndex: 0 }}
               referrerPolicy="no-referrer"
               onError={(e) => {
@@ -124,7 +149,8 @@ export default function DetailView({ slug, watchlist, toggleWatchlist, globalDow
           <div className="detail-poster-sec">
             <img
               id="detail-poster"
-              src={fixImageURL(movie.thumb_url || movie.poster_url, movie.apiSource)}
+              className="image-fade-in"
+              src={posterUrl}
               alt={movie.name}
               referrerPolicy="no-referrer"
               onError={(e) => {

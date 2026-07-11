@@ -520,3 +520,136 @@ export async function fetchMetadataList(endpoint) {
     return await fetchAPI(endpoint, 'ophim', false);
   }
 }
+
+// ==========================================================================
+// TMDB IMAGE RESOLUTION & SEARCH FALLBACK
+// ==========================================================================
+
+const TMDB_API_KEYS = [
+  '3fd2be3f0f70a115659b856729b4e546',
+  '844dba0bfd8f3a2eb86c1f2de6e8ab9e',
+  'a7d368411c858e4bcd454e58362ad0f8'
+];
+
+const bannerCache = {};
+const posterCache = {};
+
+async function fetchFromTMDB(urlPath) {
+  for (const key of TMDB_API_KEYS) {
+    try {
+      const separator = urlPath.includes('?') ? '&' : '?';
+      const url = `https://api.themoviedb.org/3/${urlPath}${separator}api_key=${key}&language=vi-VN`;
+      const res = await fetch(url);
+      if (res.ok) {
+        return await res.json();
+      }
+    } catch (e) {
+      console.warn(`TMDB fetch error for key ${key} and path ${urlPath}:`, e);
+    }
+  }
+  return null;
+}
+
+export async function getHighQualityBanner(movie) {
+  if (!movie) return '/default-banner.png';
+  const cacheKey = movie.slug;
+  if (bannerCache[cacheKey]) return bannerCache[cacheKey];
+
+  // Try direct ID lookup if tmdb ID exists
+  if (movie.tmdb?.id) {
+    const type = (movie.tmdb.type === 'tv' || movie.tmdb.type === 'series') ? 'tv' : 'movie';
+    const data = await fetchFromTMDB(`${type}/${movie.tmdb.id}`);
+    if (data?.backdrop_path) {
+      const url = `https://image.tmdb.org/t/p/w1280${data.backdrop_path}`;
+      bannerCache[cacheKey] = url;
+      return url;
+    }
+  }
+
+  // Fallback to text search
+  const query = movie.origin_name || movie.name;
+  if (query) {
+    const year = movie.year;
+    // Clean query (e.g. remove "Interview with the Vampire Season 3" parentheses/suffixes)
+    const cleanQuery = query.replace(/\(.*?\)/g, '').split('Season')[0].trim();
+    const data = await fetchFromTMDB(`search/multi?query=${encodeURIComponent(cleanQuery)}`);
+    const results = data?.results || [];
+    
+    // Find result with matching title and approximate year
+    let match = results.find(item => {
+      const relDate = item.release_date || item.first_air_date;
+      if (!relDate) return false;
+      const itemYear = new Date(relDate).getFullYear();
+      return !year || Math.abs(itemYear - year) <= 1;
+    });
+
+    if (!match && results.length > 0) {
+      match = results.find(item => item.backdrop_path);
+    }
+    if (!match && results.length > 0) {
+      match = results[0];
+    }
+
+    if (match?.backdrop_path) {
+      const url = `https://image.tmdb.org/t/p/w1280${match.backdrop_path}`;
+      bannerCache[cacheKey] = url;
+      return url;
+    }
+  }
+
+  // Final fallback to the original API's landscape thumbnail
+  const fallback = fixBackdropURL(movie.thumb_url || movie.poster_url, movie.apiSource);
+  bannerCache[cacheKey] = fallback;
+  return fallback;
+}
+
+export async function getHighQualityPoster(movie) {
+  if (!movie) return '/default-poster.png';
+  const cacheKey = movie.slug;
+  if (posterCache[cacheKey]) return posterCache[cacheKey];
+
+  // Try direct ID lookup if tmdb ID exists
+  if (movie.tmdb?.id) {
+    const type = (movie.tmdb.type === 'tv' || movie.tmdb.type === 'series') ? 'tv' : 'movie';
+    const data = await fetchFromTMDB(`${type}/${movie.tmdb.id}`);
+    if (data?.poster_path) {
+      const url = `https://image.tmdb.org/t/p/w500${data.poster_path}`;
+      posterCache[cacheKey] = url;
+      return url;
+    }
+  }
+
+  // Fallback to text search
+  const query = movie.origin_name || movie.name;
+  if (query) {
+    const year = movie.year;
+    const cleanQuery = query.replace(/\(.*?\)/g, '').split('Season')[0].trim();
+    const data = await fetchFromTMDB(`search/multi?query=${encodeURIComponent(cleanQuery)}`);
+    const results = data?.results || [];
+
+    let match = results.find(item => {
+      const relDate = item.release_date || item.first_air_date;
+      if (!relDate) return false;
+      const itemYear = new Date(relDate).getFullYear();
+      return !year || Math.abs(itemYear - year) <= 1;
+    });
+
+    if (!match && results.length > 0) {
+      match = results.find(item => item.poster_path);
+    }
+    if (!match && results.length > 0) {
+      match = results[0];
+    }
+
+    if (match?.poster_path) {
+      const url = `https://image.tmdb.org/t/p/w500${match.poster_path}`;
+      posterCache[cacheKey] = url;
+      return url;
+    }
+  }
+
+  const fallback = fixImageURL(movie.poster_url || movie.thumb_url, movie.apiSource);
+  posterCache[cacheKey] = fallback;
+  return fallback;
+}
+

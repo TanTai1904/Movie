@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import MovieCard from './MovieCard.jsx';
 import SkeletonCard from './SkeletonCard.jsx';
-import { fetchUnifiedNewMovies, fetchUnifiedCategory, fetchUnifiedDetail, fixImageURL, fixBackdropURL } from '../utils.js';
+import { fetchUnifiedNewMovies, fetchUnifiedCategory, fetchUnifiedDetail, fixImageURL, fixBackdropURL, getHighQualityBanner } from '../utils.js';
 
 export default function HomeView({ watchlist, toggleWatchlist, onLogRequest, onLogResponse }) {
   const [newMovies, setNewMovies] = useState([]);
@@ -18,6 +18,11 @@ export default function HomeView({ watchlist, toggleWatchlist, onLogRequest, onL
 
   const [heroMovie, setHeroMovie] = useState(null);
   const [loadingHero, setLoadingHero] = useState(true);
+  const [heroBannerUrl, setHeroBannerUrl] = useState('/default-banner.png');
+
+  // Live Auto Update State
+  const [hasNewUpdates, setHasNewUpdates] = useState(false);
+  const [newMoviesBackup, setNewMoviesBackup] = useState([]);
 
   // Load Newly Updated Movies
   useEffect(() => {
@@ -34,6 +39,7 @@ export default function HomeView({ watchlist, toggleWatchlist, onLogRequest, onL
         const movies = data.items || [];
         setNewMovies(movies);
         setTotalPages(data.pagination?.totalPages || 1);
+        setHasNewUpdates(false); // Reset check when manually paging
 
         // Load hero movie from this list (only on first page load or if not set)
         if (movies.length > 0 && currentPage === 1 && !heroMovie) {
@@ -48,6 +54,31 @@ export default function HomeView({ watchlist, toggleWatchlist, onLogRequest, onL
     }
     loadNewMovies();
   }, [currentPage]);
+
+  // Background check for new movies every 2 minutes
+  useEffect(() => {
+    if (currentPage !== 1) return;
+
+    const interval = setInterval(async () => {
+      try {
+        const data = await fetchUnifiedNewMovies(1);
+        const latestItems = data.items || [];
+        if (latestItems.length > 0 && newMovies.length > 0) {
+          const newestSlug = latestItems[0].slug;
+          const currentNewestSlug = newMovies[0].slug;
+
+          if (newestSlug !== currentNewestSlug) {
+            setNewMoviesBackup(latestItems);
+            setHasNewUpdates(true);
+          }
+        }
+      } catch (err) {
+        console.warn('Failed to fetch new movies in background check:', err);
+      }
+    }, 120000); // 2 minutes
+
+    return () => clearInterval(interval);
+  }, [newMovies, currentPage]);
 
   // Load other categories
   useEffect(() => {
@@ -101,6 +132,25 @@ export default function HomeView({ watchlist, toggleWatchlist, onLogRequest, onL
     }
   }
 
+  // Load High Quality Hero Banner in background
+  useEffect(() => {
+    if (!heroMovie) return;
+    let isMounted = true;
+    
+    // Set fast preview (correcting to thumb_url || poster_url)
+    const initialUrl = fixBackdropURL(heroMovie.thumb_url || heroMovie.poster_url, heroMovie.apiSource);
+    setHeroBannerUrl(initialUrl);
+
+    // Fetch high quality banner
+    getHighQualityBanner(heroMovie).then(url => {
+      if (isMounted && url) {
+        setHeroBannerUrl(url);
+      }
+    });
+
+    return () => { isMounted = false; };
+  }, [heroMovie]);
+
   const isHeroFav = heroMovie && watchlist.some(m => m.slug === heroMovie.slug);
 
   const handlePrevPage = () => {
@@ -121,6 +171,14 @@ export default function HomeView({ watchlist, toggleWatchlist, onLogRequest, onL
     }
   };
 
+  const handleApplyUpdates = () => {
+    if (newMoviesBackup.length > 0) {
+      setNewMovies(newMoviesBackup);
+      setHasNewUpdates(false);
+      loadHeroDetails(newMoviesBackup[0]);
+    }
+  };
+
   const cleanDescription = (html) => {
     if (!html) return '';
     return html.replace(/<[^>]*>/g, '');
@@ -135,8 +193,9 @@ export default function HomeView({ watchlist, toggleWatchlist, onLogRequest, onL
       >
         {heroMovie && (
           <img 
-            src={fixBackdropURL(heroMovie.poster_url || heroMovie.thumb_url, heroMovie.apiSource)} 
+            src={heroBannerUrl} 
             alt="" 
+            className="image-fade-in"
             style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover', zIndex: 0 }}
             referrerPolicy="no-referrer"
             onError={(e) => {
@@ -209,6 +268,19 @@ export default function HomeView({ watchlist, toggleWatchlist, onLogRequest, onL
             </button>
           </div>
         </div>
+
+        {hasNewUpdates && (
+          <div className="live-sync-toast animate-slide-down">
+            <div className="live-sync-content">
+              <i className="bx bx-bell bx-tada accent-color"></i>
+              <span>Vừa phát hiện có phim mới được cập nhật live!</span>
+            </div>
+            <button className="btn-reload-sync" onClick={handleApplyUpdates}>
+              Xem Ngay <i className="bx bx-refresh"></i>
+            </button>
+          </div>
+        )}
+
         <div id="new-movies-grid" className="movies-grid">
           {loadingNew ? (
             <SkeletonCard count={10} />
