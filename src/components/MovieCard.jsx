@@ -1,23 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { fixImageURL, getHighQualityPoster } from '../utils.js';
+import React from 'react';
+import { fixImageURL } from '../utils.js';
 
 export default function MovieCard({ movie }) {
-  const [posterUrl, setPosterUrl] = useState(() => 
-    fixImageURL(movie.poster_url || movie.thumb_url, movie.apiSource)
-  );
-
-  useEffect(() => {
-    let isMounted = true;
-    
-    // Fetch high quality poster from TMDB in background
-    getHighQualityPoster(movie).then(url => {
-      if (isMounted && url) {
-        setPosterUrl(url);
-      }
-    });
-
-    return () => { isMounted = false; };
-  }, [movie]);
+  const posterUrl = fixImageURL(movie.poster_url || movie.thumb_url, movie.apiSource);
 
   const handleClick = () => {
     window.location.hash = `#movie/${movie.slug}`;

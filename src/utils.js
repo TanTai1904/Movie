@@ -10,54 +10,53 @@ export function getAPIBase(apiSource) {
 
 export function fixImageURL(url, apiSource) {
   if (!url) return '/default-poster.png';
-  if (url.startsWith('http://') || url.startsWith('https://')) {
-    return url;
-  }
   
-  const cleanUrl = url.startsWith('/') ? url.substring(1) : url;
+  let resolvedUrl = url;
+  if (!url.startsWith('http://') && !url.startsWith('https://')) {
+    const cleanUrl = url.startsWith('/') ? url.substring(1) : url;
 
-  if (apiSource === 'ophim') {
-    if (cleanUrl.startsWith('uploads/movies/')) {
-      return `https://img.ophim.live/${cleanUrl}`;
+    if (apiSource === 'ophim') {
+      resolvedUrl = cleanUrl.startsWith('uploads/movies/') 
+        ? `https://img.ophim.live/${cleanUrl}`
+        : `https://img.ophim.live/uploads/movies/${cleanUrl}`;
+    } else if (apiSource === 'phimapi') {
+      resolvedUrl = cleanUrl.startsWith('upload/vod/')
+        ? `https://phimimg.com/${cleanUrl}`
+        : `https://phimimg.com/upload/vod/${cleanUrl}`;
+    } else if (apiSource === 'nguonc') {
+      resolvedUrl = `https://phim.nguonc.com/${cleanUrl}`;
+    } else {
+      resolvedUrl = `https://phimimg.com/upload/vod/${cleanUrl}`;
     }
-    return `https://img.ophim.live/uploads/movies/${cleanUrl}`;
   }
-  if (apiSource === 'phimapi') {
-    if (cleanUrl.startsWith('upload/vod/')) {
-      return `https://phimimg.com/${cleanUrl}`;
-    }
-    return `https://phimimg.com/upload/vod/${cleanUrl}`;
-  }
-  if (apiSource === 'nguonc') {
-    return `https://phim.nguonc.com/${cleanUrl}`;
-  }
-  return `https://phimimg.com/upload/vod/${cleanUrl}`;
+
+  // Route through global proxy CDN to bypass local ISP wall blocks and compress images to WebP
+  return `https://images.weserv.nl/?url=${encodeURIComponent(resolvedUrl)}`;
 }
 
 export function fixBackdropURL(url, apiSource) {
   if (!url) return '/default-banner.png';
-  if (url.startsWith('http://') || url.startsWith('https://')) {
-    return url;
-  }
   
-  const cleanUrl = url.startsWith('/') ? url.substring(1) : url;
+  let resolvedUrl = url;
+  if (!url.startsWith('http://') && !url.startsWith('https://')) {
+    const cleanUrl = url.startsWith('/') ? url.substring(1) : url;
 
-  if (apiSource === 'ophim') {
-    if (cleanUrl.startsWith('uploads/movies/')) {
-      return `https://img.ophim.live/${cleanUrl}`;
+    if (apiSource === 'ophim') {
+      resolvedUrl = cleanUrl.startsWith('uploads/movies/')
+        ? `https://img.ophim.live/${cleanUrl}`
+        : `https://img.ophim.live/uploads/movies/${cleanUrl}`;
+    } else if (apiSource === 'phimapi') {
+      resolvedUrl = cleanUrl.startsWith('upload/vod/')
+        ? `https://phimimg.com/${cleanUrl}`
+        : `https://phimimg.com/upload/vod/${cleanUrl}`;
+    } else if (apiSource === 'nguonc') {
+      resolvedUrl = `https://phim.nguonc.com/${cleanUrl}`;
+    } else {
+      resolvedUrl = `https://phimimg.com/upload/vod/${cleanUrl}`;
     }
-    return `https://img.ophim.live/uploads/movies/${cleanUrl}`;
   }
-  if (apiSource === 'phimapi') {
-    if (cleanUrl.startsWith('upload/vod/')) {
-      return `https://phimimg.com/${cleanUrl}`;
-    }
-    return `https://phimimg.com/upload/vod/${cleanUrl}`;
-  }
-  if (apiSource === 'nguonc') {
-    return `https://phim.nguonc.com/${cleanUrl}`;
-  }
-  return `https://phimimg.com/upload/vod/${cleanUrl}`;
+
+  return `https://images.weserv.nl/?url=${encodeURIComponent(resolvedUrl)}`;
 }
 
 export function normalizeMovieItem(item, source) {
